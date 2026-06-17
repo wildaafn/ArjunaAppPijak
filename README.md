@@ -2,6 +2,7 @@
 
 [![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![Vue.js](https://img.shields.io/badge/Frontend-Vue%203-4FC08D?style=for-the-badge&logo=vuedotjs&logoColor=white)](https://vuejs.org/)
+[![Flutter](https://img.shields.io/badge/Mobile-Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white)](https://flutter.dev/)
 [![Vite](https://img.shields.io/badge/Bundler-Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
 [![Tailwind CSS](https://img.shields.io/badge/Styling-Tailwind%20CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
 [![Docker](https://img.shields.io/badge/Container-Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
@@ -10,7 +11,9 @@
 
 **Arjuna Pijak** adalah platform cerdas untuk memantau, menganalisis, dan memprediksi pergerakan harga komoditas pangan di berbagai daerah di Indonesia. Aplikasi ini mengintegrasikan pemodelan statistik tingkat lanjut dengan antarmuka yang modern, dinamis, dan responsif.
 
-🔗 **Akses Aplikasi:** [https://arjunapijak.web.id](https://arjunapijak.web.id)
+🔗 **Tautan Akses:**
+- 🖥️ **Web Utama**: [https://arjunapijak.web.id](https://arjunapijak.web.id)
+- 📱 **Mobile Web**: [https://mobile.arjunapijak.web.id](https://mobile.arjunapijak.web.id)
 
 ---
 
@@ -33,6 +36,7 @@ graph TD
     User([Pengguna]) -->|HTTPS| CF[Cloudflare Worker Proxy]
     CF -->|arjunapijak.web.id/*| CR_FE[Google Cloud Run - Frontend]
     CF -->|api.arjunapijak.web.id/*| CR_BE[Google Cloud Run - Backend]
+    CF -->|mobile.arjunapijak.web.id/*| CR_MB[Google Cloud Run - Mobile]
     CR_BE -->|Database Query| DB[(PostgreSQL Database)]
     CR_BE -->|AI Summary| NVIDIA[NVIDIA NIM AI Service]
 ```
@@ -48,10 +52,13 @@ arjuna-app/
 │   │   ├── api/        # Endpoint API
 │   │   ├── services/   # Logika bisnis (forecasting, sync, AI summary)
 │   │   └── db/         # Setup database & ORM
-│   └── Dockerfile      # Konfigurasi containerisasi
-├── frontend/           # Aplikasi Client (Vue 3 + Vite + Tailwind CSS)
+│   └── Dockerfile.prod # Konfigurasi containerisasi produksi
+├── frontend/           # Aplikasi Client Web (Vue 3 + Vite + Tailwind CSS)
 │   ├── src/            # Komponen, router, views, dan aset
-│   └── Dockerfile      # Konfigurasi containerisasi
+│   └── Dockerfile.prod # Konfigurasi containerisasi produksi
+├── mobile/             # Aplikasi Client Mobile (Flutter Web App)
+│   ├── lib/            # Kode utama Flutter (Riverpod, BLoC/Cubit, UI)
+│   └── Dockerfile.prod # Containerisasi multi-stage (Flutter SDK -> Nginx)
 └── cloudflare-proxy/   # Serverless Reverse Proxy (Cloudflare Workers)
     └── src/index.js    # Logika routing & rewrite lalu lintas
 ```
@@ -118,14 +125,30 @@ Pastikan Anda telah memasang [Docker](https://www.docker.com/) dan [Docker Compo
    npm run dev
    ```
 
+### 3. Setup Mobile (Flutter Web)
+
+1. Pastikan Anda telah menginstal [Flutter SDK](https://docs.flutter.dev/get-started/install) versi stabil.
+2. Masuk ke direktori mobile:
+   ```bash
+   cd ../mobile
+   ```
+3. Unduh package yang dibutuhkan:
+   ```bash
+   flutter pub get
+   ```
+4. Jalankan aplikasi pada mode web lokal:
+   ```bash
+   flutter run -d chrome
+   ```
+
 ---
 
 ## ☁️ Integrasi & Deployment (CI/CD)
 
 Proyek ini terintegrasi sepenuhnya dengan **Google Cloud Build** (`cloudbuild.yaml`) untuk melancarkan proses integrasi dan penyebaran berkelanjutan:
-- **Build & Push**: Docker image dibuat otomatis saat terjadi *push* ke cabang utama dan diunggah ke *Artifact Registry* GCP.
-- **Serverless Deploy**: Image disebarkan langsung ke *Google Cloud Run* dengan penskalaan dinamis dari `0` hingga `3` instansi (untuk efisiensi biaya optimal).
-- **Reverse Proxy**: Diarahkan via *Cloudflare Worker* agar domain utama dapat melayani frontend dan backend di bawah satu SSL domain tanpa tumpang tindih.
+- **Build & Push**: Docker image untuk backend (FastAPI), frontend web (Vue 3), dan mobile web (Flutter) dibuat secara otomatis saat terjadi *push* ke cabang utama (`main`) dan diunggah ke *Artifact Registry* GCP.
+- **Serverless Deploy**: Ketiga image disebarkan langsung ke *Google Cloud Run* (`arjuna-backend`, `arjuna-frontend`, `arjuna-mobile`) dengan penskalaan dinamis dari `0` hingga `3` instansi (untuk efisiensi biaya optimal di bawah anggaran $5).
+- **Reverse Proxy & Routing**: Diarahkan via *Cloudflare Worker* (`cloudflare-proxy`) agar domain utama `arjunapijak.web.id`, API `api.arjunapijak.web.id`, dan mobile `mobile.arjunapijak.web.id` terpusat dan dilindungi oleh SSL Cloudflare.
 
 ---
 

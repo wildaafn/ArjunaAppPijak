@@ -5,13 +5,13 @@ export default {
     // Cek apakah request ditujukan ke subdomain API, Mobile, atau Frontend
     if (url.hostname === 'api.arjunapijak.web.id') {
       // Arahkan ke Cloud Run Backend
-      url.hostname = 'arjuna-backend-60410062142.asia-southeast2.run.app';
+      url.hostname = 'arjuna-backend-c4qby247fa-et.a.run.app';
     } else if (url.hostname === 'mobile.arjunapijak.web.id') {
       // Arahkan ke Cloud Run Mobile
-      url.hostname = 'arjuna-mobile-60410062142.asia-southeast2.run.app';
+      url.hostname = 'arjuna-mobile-c4qby247fa-et.a.run.app';
     } else {
       // Arahkan ke Cloud Run Frontend
-      url.hostname = 'arjuna-frontend-60410062142.asia-southeast2.run.app';
+      url.hostname = 'arjuna-frontend-c4qby247fa-et.a.run.app';
     }
     
     // Buat request baru dengan URL yang sudah diubah
