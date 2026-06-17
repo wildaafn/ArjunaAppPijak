@@ -1,0 +1,68 @@
+# Virtual Environment
+.venv/
+venv/
+env/
+ENV/
+bin/
+/lib/
+share/
+include/
+
+# Flutter mobile/lib exception (do NOT ignore)
+!mobile/lib/
+!mobile/lib/**
+!mobile/test/
+!mobile/test/**
+!mobile/pubspec.yaml
+!mobile/pubspec.lock
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+
+# Python bytecode and cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+
+# OS specific files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE specific files
+.vscode/
+.idea/
+*.swp
+*.swo
+dataset.json
+.venv
+build.md
+node_modules
+.env
+stitch.md
+__pycache__
+merge_datasets.py
+update2021.json
+update2022.json
+update2023.json
+
+# Databases
+*.db
+*.sqlite3
+*.sqlite
+
+# Secrets & Configs
+mobile/secrets.json
+mobile/config.json
+
+

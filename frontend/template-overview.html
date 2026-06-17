@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Arjuna Pijak - Commodities</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary": "#e8be9f",
+                        "surface-container-high": "#2a2a2c",
+                        "surface-container-highest": "#353436",
+                        "secondary": "#ffdf9e",
+                        "error": "#ffb4ab",
+                        "surface-container-low": "#1b1b1d",
+                        "on-primary": "#292f48",
+                        "error-container": "#93000a",
+                        "on-secondary-fixed": "#261a00",
+                        "inverse-primary": "#575d78",
+                        "tertiary-container": "#210d00",
+                        "on-surface": "#e5e2e4",
+                        "tertiary-fixed-dim": "#e8be9f",
+                        "secondary-container": "#fabd00",
+                        "secondary-fixed-dim": "#fabd00",
+                        "on-secondary-container": "#6a4e00",
+                        "surface-bright": "#39393b",
+                        "primary-container": "#0a1128",
+                        "primary": "#bfc5e4",
+                        "on-background": "#e5e2e4",
+                        "outline": "#909098",
+                        "on-tertiary": "#442b14",
+                        "surface-variant": "#353436",
+                        "primary-fixed-dim": "#bfc5e4",
+                        "background": "#131315",
+                        "inverse-on-surface": "#303032",
+                        "on-primary-fixed-variant": "#3f465f",
+                        "outline-variant": "#46464d",
+                        "on-primary-container": "#767c99",
+                        "surface-tint": "#bfc5e4",
+                        "on-secondary": "#3f2e00",
+                        "on-tertiary-fixed-variant": "#5e4029",
+                        "on-tertiary-fixed": "#2c1603",
+                        "on-secondary-fixed-variant": "#5b4300",
+                        "primary-fixed": "#dce1ff",
+                        "on-surface-variant": "#c6c6ce",
+                        "on-error-container": "#ffdad6",
+                        "surface-dim": "#131315",
+                        "surface-container": "#1f1f21",
+                        "inverse-surface": "#e5e2e4",
+                        "on-tertiary-container": "#9a765b",
+                        "secondary-fixed": "#ffdf9e",
+                        "on-primary-fixed": "#141a32",
+                        "surface": "#131315",
+                        "tertiary-fixed": "#ffdcc3",
+                        "surface-container-lowest": "#0e0e10",
+                        "on-error": "#690005"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "lg": "48px",
+                        "gutter": "24px",
+                        "container-max": "1440px",
+                        "base": "8px",
+                        "sm": "12px",
+                        "md": "24px",
+                        "xs": "4px",
+                        "xl": "80px"
+                    },
+                    "fontFamily": {
+                        "label-caps": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "title-md": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "data-mono": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-caps": ["12px", { "lineHeight": "1", "letterSpacing": "0.08em", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "title-md": ["20px", { "lineHeight": "1.4", "fontWeight": "500" }],
+                        "display-lg": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "data-mono": ["18px", { "lineHeight": "1", "letterSpacing": "-0.01em", "fontWeight": "500" }],
+                        "body-sm": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "body-lg": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #131315;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(10, 17, 40, 0.4), transparent 50%),
+                radial-gradient(circle at 85% 30%, rgba(10, 17, 40, 0.5), transparent 50%);
+            background-attachment: fixed;
+            color: #e5e2e4;
+        }
+        
+        .glass-card {
+            background: linear-gradient(to bottom, rgba(255,255,255,0.12), rgba(255,255,255,0.05));
+            backdrop-filter: blur(20px) saturate(150%);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .glass-nav {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(24px) saturate(150%);
+            border-right: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sparkline {
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: dash 2s linear forwards;
+        }
+
+        @keyframes dash {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+        
+        .cyan-glow {
+            box-shadow: 0 0 12px #00E5FF;
+        }
+        
+        .cyan-text {
+            color: #00E5FF;
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex">
+<!-- SideNavBar -->
+<nav class="hidden md:flex fixed left-0 top-0 h-full w-64 flex-col p-md gap-sm z-40 glass-nav">
+<!-- Header -->
+<div class="flex items-center gap-sm mb-lg">
+<img alt="Arjuna Pijak Logo" class="w-12 h-12 rounded-lg object-cover" data-alt="A highly detailed abstract 3D rendering of a geometric logo. The logo features sharp, crystalline structures intersecting with fluid, liquid-like forms, symbolizing the transformation of data. It is lit by dramatic, high-contrast studio lighting with subtle cyan and golden yellow accents against a dark navy background. The style is modern, premium, and sophisticated, reflecting a high-fidelity glassmorphism aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5IvSb1FRtlhNjLjrHOQYhTdwGPvScQr-MzGnSYJelUEn12R1NrryHlU7gNLc8ROk06OnuEfH6gIROVu5S2JN1WnK2GX12aO1MtCH87n2KbPjHAb0b-BLPGHFpk9mFF_aFusENmEhrYY0BLSwevEBmsT_dicoEkiH7ryASB6U0OrGUuRu3bWOdHfIwezrqNmhrw4LGeqw7fhQ70wOpeUwHPSa_59rAK-gaEl73ahTdqkg93TBiVeJgvq7AJJHMip4TbSa3mJ5lyFv9"/>
+<div>
+<h1 class="font-headline-lg text-headline-lg font-bold text-on-surface tracking-tight" style="font-size: 20px;">Arjuna Pijak</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Price Intelligence</p>
+</div>
+</div>
+<!-- Main Tabs -->
+<div class="flex flex-col gap-base flex-1">
+<a class="flex items-center gap-sm p-sm rounded-lg text-on-surface-variant hover:bg-white/5 hover:text-primary transition-all duration-300 ease-in-out" href="#">
+<span class="material-symbols-outlined font-title-md text-title-md">dashboard</span>
+<span class="font-label-caps text-label-caps">Dashboard</span>
+</a>
+<a class="flex items-center gap-sm p-sm rounded-lg bg-secondary-container text-on-secondary-container font-bold shadow-[0_0_12px_rgba(250,189,0,0.3)] transition-all duration-300 ease-in-out" href="#">
+<span class="material-symbols-outlined font-title-md text-title-md" style="font-variation-settings: 'FILL' 1;">dataset</span>
+<span class="font-label-caps text-label-caps">Commodities</span>
+</a>
+<a class="flex items-center gap-sm p-sm rounded-lg text-on-surface-variant hover:bg-white/5 hover:text-primary transition-all duration-300 ease-in-out" href="#">
+<span class="material-symbols-outlined font-title-md text-title-md">query_stats</span>
+<span class="font-label-caps text-label-caps">Analytics</span>
+</a>
+<a class="flex items-center gap-sm p-sm rounded-lg text-on-surface-variant hover:bg-white/5 hover:text-primary transition-all duration-300 ease-in-out" href="#">
+<span class="material-symbols-outlined font-title-md text-title-md">history</span>
+<span class="font-label-caps text-label-caps">History</span>
+</a>
+<a class="flex items-center gap-sm p-sm rounded-lg text-on-surface-variant hover:bg-white/5 hover:text-primary transition-all duration-300 ease-in-out" href="#">
+<span class="material-symbols-outlined font-title-md text-title-md">description</span>
+<span class="font-label-caps text-label-caps">Reports</span>
+</a>
+</div>
+<!-- CTA & Footer Tabs -->
+<div class="mt-auto flex flex-col gap-sm">
+<button class="w-full bg-secondary-container text-tertiary-container font-label-caps text-label-caps font-bold py-sm px-md rounded-lg hover:brightness-110 transition-all flex justify-center items-center gap-xs">
+                Export Data
+            </button>
+<div class="w-full h-px bg-white/10 my-xs"></div>
+<a class="flex items-center gap-sm p-sm rounded-lg text-on-surface-variant hover:bg-white/5 hover:text-primary transition-all duration-300 ease-in-out" href="#">
+<span class="material-symbols-outlined font-title-md text-title-md">help</span>
+<span class="font-label-caps text-label-caps">Support</span>
+</a>
+<a class="flex items-center gap-sm p-sm rounded-lg text-on-surface-variant hover:bg-white/5 hover:text-primary transition-all duration-300 ease-in-out" href="#">
+<span class="material-symbols-outlined font-title-md text-title-md">account_circle</span>
+<span class="font-label-caps text-label-caps">Account</span>
+</a>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="flex-1 md:ml-64 p-md md:p-lg max-w-container-max mx-auto w-full">
+<!-- Header -->
+<header class="mb-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-md">
+<div>
+<h2 class="font-display-lg text-display-lg text-on-surface mb-base">Market Overview</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Real-time commodity pricing and analytics.</p>
+</div>
+<div class="relative w-full md:w-64">
+<span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-outline-variant">search</span>
+<input class="w-full bg-surface-container-low/50 border-b border-outline-variant text-on-surface font-body-sm text-body-sm pl-xl pr-sm py-sm focus:outline-none focus:border-[#00E5FF] focus:shadow-[inset_0_-2px_10px_rgba(0,229,255,0.1)] transition-all bg-transparent placeholder-on-surface-variant rounded-t-DEFAULT" placeholder="Search commodities..." type="text"/>
+</div>
+</header>
+<!-- Top Movers (Bento Grid) -->
+<section class="mb-xl">
+<h3 class="font-headline-lg text-headline-lg text-on-surface mb-md">Top Movers (24h)</h3>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<!-- Mover 1 -->
+<div class="glass-card rounded-xl p-md flex flex-col justify-between h-48 relative overflow-hidden group">
+<div class="absolute inset-0 bg-gradient-to-b from-[#00E5FF]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+<div class="flex justify-between items-start relative z-10">
+<div>
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider block mb-xs">Spices</span>
+<h4 class="font-title-md text-title-md text-on-surface font-bold">Cabai Merah</h4>
+</div>
+<div class="flex items-center gap-xs bg-error/10 text-error px-sm py-xs rounded-full">
+<span class="material-symbols-outlined text-[16px]">trending_up</span>
+<span class="font-data-mono text-data-mono text-sm">+8.4%</span>
+</div>
+</div>
+<div class="relative z-10">
+<p class="font-data-mono text-data-mono text-[32px] text-on-surface font-bold">Rp 65,000<span class="text-body-sm text-on-surface-variant font-normal ml-xs">/kg</span></p>
+</div>
+</div>
+<!-- Mover 2 -->
+<div class="glass-card rounded-xl p-md flex flex-col justify-between h-48 relative overflow-hidden group">
+<div class="absolute inset-0 bg-gradient-to-b from-[#00E5FF]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+<div class="flex justify-between items-start relative z-10">
+<div>
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider block mb-xs">Vegetables</span>
+<h4 class="font-title-md text-title-md text-on-surface font-bold">Bawang Merah</h4>
+</div>
+<div class="flex items-center gap-xs bg-[#00E5FF]/10 cyan-text px-sm py-xs rounded-full">
+<span class="material-symbols-outlined text-[16px]">trending_down</span>
+<span class="font-data-mono text-data-mono text-sm">-5.2%</span>
+</div>
+</div>
+<div class="relative z-10">
+<p class="font-data-mono text-data-mono text-[32px] text-on-surface font-bold">Rp 32,500<span class="text-body-sm text-on-surface-variant font-normal ml-xs">/kg</span></p>
+</div>
+</div>
+<!-- Mover 3 -->
+<div class="glass-card rounded-xl p-md flex flex-col justify-between h-48 relative overflow-hidden group">
+<div class="absolute inset-0 bg-gradient-to-b from-[#00E5FF]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+<div class="flex justify-between items-start relative z-10">
+<div>
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider block mb-xs">Meat</span>
+<h4 class="font-title-md text-title-md text-on-surface font-bold">Daging Ayam</h4>
+</div>
+<div class="flex items-center gap-xs bg-error/10 text-error px-sm py-xs rounded-full">
+<span class="material-symbols-outlined text-[16px]">trending_up</span>
+<span class="font-data-mono text-data-mono text-sm">+3.1%</span>
+</div>
+</div>
+<div class="relative z-10">
+<p class="font-data-mono text-data-mono text-[32px] text-on-surface font-bold">Rp 38,000<span class="text-body-sm text-on-surface-variant font-normal ml-xs">/kg</span></p>
+</div>
+</div>
+</div>
+</section>
+<!-- Main Commodity Grid -->
+<section>
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-lg gap-md">
+<h3 class="font-headline-lg text-headline-lg text-on-surface">All Commodities</h3>
+<!-- Filters -->
+<div class="flex flex-wrap gap-sm">
+<button class="px-md py-sm rounded-full glass-card border-[#00E5FF] text-[#00E5FF] font-label-caps text-label-caps shadow-[0_0_8px_rgba(0,229,255,0.2)]">All</button>
+<button class="px-md py-sm rounded-full glass-card text-on-surface-variant font-label-caps text-label-caps hover:text-on-surface transition-colors">Grains</button>
+<button class="px-md py-sm rounded-full glass-card text-on-surface-variant font-label-caps text-label-caps hover:text-on-surface transition-colors">Spices</button>
+<button class="px-md py-sm rounded-full glass-card text-on-surface-variant font-label-caps text-label-caps hover:text-on-surface transition-colors">Meat</button>
+<button class="px-md py-sm rounded-full glass-card text-on-surface-variant font-label-caps text-label-caps hover:text-on-surface transition-colors">Vegetables</button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-gutter">
+<!-- Card 1 -->
+<div class="glass-card rounded-lg p-md hover:border-[#00E5FF]/50 transition-colors duration-300">
+<div class="flex justify-between items-center mb-md">
+<h5 class="font-title-md text-title-md text-on-surface font-semibold">Beras Premium</h5>
+<span class="font-label-caps text-label-caps text-on-surface-variant bg-white/5 px-sm py-xs rounded">Grains</span>
+</div>
+<div class="flex justify-between items-end mb-sm">
+<p class="font-data-mono text-data-mono text-[20px] text-on-surface">Rp 15,500</p>
+<span class="text-sm text-[#00E5FF]">+0.5%</span>
+</div>
+<svg class="w-full h-12" preserveaspectratio="none" viewbox="0 0 100 30">
+<path class="sparkline" d="M0 25 L10 22 L20 24 L30 15 L40 18 L50 10 L60 12 L70 5 L80 8 L90 2 L100 5" fill="none" stroke="#00E5FF" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+<path d="M0 25 L10 22 L20 24 L30 15 L40 18 L50 10 L60 12 L70 5 L80 8 L90 2 L100 5 L100 30 L0 30 Z" fill="url(#cyan-gradient)" opacity="0.2"></path>
+</svg>
+</div>
+<!-- Card 2 -->
+<div class="glass-card rounded-lg p-md hover:border-[#00E5FF]/50 transition-colors duration-300">
+<div class="flex justify-between items-center mb-md">
+<h5 class="font-title-md text-title-md text-on-surface font-semibold">Daging Sapi</h5>
+<span class="font-label-caps text-label-caps text-on-surface-variant bg-white/5 px-sm py-xs rounded">Meat</span>
+</div>
+<div class="flex justify-between items-end mb-sm">
+<p class="font-data-mono text-data-mono text-[20px] text-on-surface">Rp 135,000</p>
+<span class="text-sm text-on-surface-variant">0.0%</span>
+</div>
+<svg class="w-full h-12" preserveaspectratio="none" viewbox="0 0 100 30">
+<path class="sparkline" d="M0 15 L20 15 L40 16 L60 15 L80 14 L100 15" fill="none" stroke="#00E5FF" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+<path d="M0 15 L20 15 L40 16 L60 15 L80 14 L100 15 L100 30 L0 30 Z" fill="url(#cyan-gradient)" opacity="0.2"></path>
+</svg>
+</div>
+<!-- Card 3 -->
+<div class="glass-card rounded-lg p-md hover:border-[#00E5FF]/50 transition-colors duration-300">
+<div class="flex justify-between items-center mb-md">
+<h5 class="font-title-md text-title-md text-on-surface font-semibold">Minyak Goreng</h5>
+<span class="font-label-caps text-label-caps text-on-surface-variant bg-white/5 px-sm py-xs rounded">Staple</span>
+</div>
+<div class="flex justify-between items-end mb-sm">
+<p class="font-data-mono text-data-mono text-[20px] text-on-surface">Rp 17,200</p>
+<span class="text-sm text-error">+1.2%</span>
+</div>
+<svg class="w-full h-12" preserveaspectratio="none" viewbox="0 0 100 30">
+<path class="sparkline" d="M0 20 L20 18 L40 22 L60 15 L80 10 L100 5" fill="none" stroke="#00E5FF" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+<path d="M0 20 L20 18 L40 22 L60 15 L80 10 L100 5 L100 30 L0 30 Z" fill="url(#cyan-gradient)" opacity="0.2"></path>
+</svg>
+</div>
+<!-- Card 4 -->
+<div class="glass-card rounded-lg p-md hover:border-[#00E5FF]/50 transition-colors duration-300">
+<div class="flex justify-between items-center mb-md">
+<h5 class="font-title-md text-title-md text-on-surface font-semibold">Telur Ayam</h5>
+<span class="font-label-caps text-label-caps text-on-surface-variant bg-white/5 px-sm py-xs rounded">Protein</span>
+</div>
+<div class="flex justify-between items-end mb-sm">
+<p class="font-data-mono text-data-mono text-[20px] text-on-surface">Rp 28,000</p>
+<span class="text-sm text-[#00E5FF]">-0.8%</span>
+</div>
+<svg class="w-full h-12" preserveaspectratio="none" viewbox="0 0 100 30">
+<path class="sparkline" d="M0 5 L20 10 L40 8 L60 15 L80 20 L100 25" fill="none" stroke="#00E5FF" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+<path d="M0 5 L20 10 L40 8 L60 15 L80 20 L100 25 L100 30 L0 30 Z" fill="url(#cyan-gradient)" opacity="0.2"></path>
+</svg>
+</div>
+</div>
+</section>
+</main>
+<!-- SVG Definitions for Gradients -->
+<svg aria-hidden="true" focusable="false" style="width:0;height:0;position:absolute;">
+<defs>
+<lineargradient id="cyan-gradient" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#00E5FF"></stop>
+<stop offset="100%" stop-color="#00E5FF" stop-opacity="0"></stop>
+</lineargradient>
+</defs>
+</svg>
+</body></html>
