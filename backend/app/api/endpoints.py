@@ -171,7 +171,7 @@ def get_model_insight(
 ):
     """
     Menghasilkan rekomendasi bisnis taktis untuk pelaku UMKM dan masyarakat
-    menggunakan model Google Gemma 4 (31B) berdasarkan hasil prediksi sistem.
+    menggunakan model NVIDIA NIM berdasarkan hasil prediksi sistem.
     """
     try:
         insight = get_ai_insight(
@@ -182,6 +182,14 @@ def get_model_insight(
             predicted_price=predicted_price,
             db=db
         )
+        
+        # Ambil metadata tanggal fetch & training terbaru untuk ditampilkan di UI
+        from app.services.sync_service import get_system_metadata
+        metadata = get_system_metadata()
+        if isinstance(insight, dict):
+            insight["last_updated_train"] = metadata.get("last_updated_train", "-")
+            insight["last_updated_fetch"] = metadata.get("last_updated_fetch", "-")
+            
         return {"insight": insight}
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -198,4 +206,15 @@ def get_market_summary(db: Session = Depends(get_db)):
         return data
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Gagal mengambil ringkasan pasar: {str(e)}")
+
+@router.post("/api/trigger-sync", tags=["Admin/Sync"])
+def trigger_sync(db: Session = Depends(get_db)):
+    """Memicu proses sinkronisasi dataset terbaru dari BI dan melakukan retraining/pre-cache model secara manual."""
+    try:
+        from app.services.sync_service import trigger_full_sync_job
+        res = trigger_full_sync_job(db)
+        return {"status": "success", "detail": res}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Gagal melakukan sinkronisasi: {str(e)}")
+
 

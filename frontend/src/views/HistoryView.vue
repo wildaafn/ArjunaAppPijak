@@ -2,8 +2,8 @@
   <div class="h-full flex flex-col">
     <!-- Header -->
     <header class="mb-xl">
-      <h1 class="font-display-lg text-headline-lg-mobile md:text-display-lg text-on-surface mb-xs">Price History &amp; Audit</h1>
-      <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">Review historical trends and past prediction accuracy across the archipelago market ecosystem.</p>
+      <h1 class="font-display-lg text-headline-lg-mobile md:text-display-lg text-on-surface mb-xs">Riwayat Harga &amp; Audit</h1>
+      <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">Tinjau tren historis dan akurasi prediksi masa lalu di seluruh ekosistem pasar nusantara.</p>
     </header>
 
     <!-- Main Grid Layout -->
@@ -13,12 +13,12 @@
         <div class="glass-card rounded-xl p-md flex flex-col gap-md sticky top-lg">
           <h2 class="font-title-md text-title-md text-on-surface flex items-center gap-sm mb-xs">
             <span class="material-symbols-outlined text-primary">tune</span>
-            Analysis Filters
+            Filter Analisis
           </h2>
           
           <!-- Filter: Commodity -->
           <div class="flex flex-col gap-xs">
-            <label class="font-label-caps text-label-caps text-on-surface-variant">Select Commodity</label>
+            <label class="font-label-caps text-label-caps text-on-surface-variant">Pilih Komoditas</label>
             <div class="relative">
               <select v-model="selectedCommodity" class="ghost-input w-full p-sm rounded-lg font-body-sm text-body-sm appearance-none cursor-pointer pr-10">
                 <option v-for="c in commodities" :key="c" :value="c" class="bg-surface text-on-surface">{{ c }}</option>
@@ -29,30 +29,30 @@
           
           <!-- Filter: Time Range -->
           <div class="flex flex-col gap-xs">
-            <label class="font-label-caps text-label-caps text-on-surface-variant">Time Range</label>
+            <label class="font-label-caps text-label-caps text-on-surface-variant">Rentang Waktu</label>
             <div class="grid grid-cols-2 gap-xs">
               <label :class="{'bg-white/10 border-cyan/30': timeRange === '30d'}" class="flex items-center justify-center p-sm rounded-lg border border-white/10 bg-white/5 cursor-pointer hover:bg-white/10 transition-colors">
                 <input class="hidden" name="time_range" type="radio" value="30d" v-model="timeRange"/>
-                <span class="font-body-sm text-body-sm text-on-surface">30 Days</span>
+                <span class="font-body-sm text-body-sm text-on-surface">30 Hari</span>
               </label>
               <label :class="{'bg-white/10 border-cyan/30': timeRange === '90d'}" class="flex items-center justify-center p-sm rounded-lg border border-white/10 bg-white/5 cursor-pointer hover:bg-white/10 transition-colors">
                 <input class="hidden" name="time_range" type="radio" value="90d" v-model="timeRange"/>
-                <span class="font-body-sm text-body-sm text-on-surface">3 Months</span>
+                <span class="font-body-sm text-body-sm text-on-surface">3 Bulan</span>
               </label>
               <label :class="{'bg-white/10 border-cyan/30': timeRange === '1y'}" class="flex items-center justify-center p-sm rounded-lg border border-white/10 bg-white/5 cursor-pointer hover:bg-white/10 transition-colors">
                 <input class="hidden" name="time_range" type="radio" value="1y" v-model="timeRange"/>
-                <span class="font-body-sm text-body-sm text-on-surface">1 Year</span>
+                <span class="font-body-sm text-body-sm text-on-surface">1 Tahun</span>
               </label>
               <label :class="{'bg-white/10 border-cyan/30': timeRange === 'all'}" class="flex items-center justify-center p-sm rounded-lg border border-white/10 bg-white/5 cursor-pointer hover:bg-white/10 transition-colors">
                 <input class="hidden" name="time_range" type="radio" value="all" v-model="timeRange"/>
-                <span class="font-body-sm text-body-sm text-on-surface">All Time</span>
+                <span class="font-body-sm text-body-sm text-on-surface">Semua Waktu</span>
               </label>
             </div>
           </div>
           
           <!-- CTA -->
           <button @click="fetchHistory" class="w-full mt-sm py-sm rounded-lg bg-secondary-container text-on-secondary-container font-title-md text-[14px] font-bold shadow-[0_4px_14px_rgba(250,189,0,0.2)] hover:shadow-[0_6px_20px_rgba(250,189,0,0.3)] hover:-translate-y-0.5 transition-all duration-200">
-            Apply Filters
+            Terapkan Filter
           </button>
         </div>
       </div>
@@ -63,7 +63,7 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
           <div class="glass-card rounded-xl p-md flex flex-col gap-sm">
             <div class="flex items-center justify-between">
-              <span class="font-label-caps text-label-caps text-on-surface-variant">Avg. Historical Price</span>
+              <span class="font-label-caps text-label-caps text-on-surface-variant">Rata-rata Harga Historis</span>
               <span class="material-symbols-outlined text-on-surface-variant text-[20px]">payments</span>
             </div>
             <div class="flex items-baseline gap-sm">
@@ -72,12 +72,12 @@
                 <span class="material-symbols-outlined text-[14px]">{{ trendDelta > 0 ? 'trending_up' : 'trending_down' }}</span> {{ trendDelta > 0 ? '+' : '' }}{{ trendDelta }}%
               </span>
             </div>
-            <span class="font-body-sm text-[12px] text-on-surface-variant">per Kg over selected period</span>
+            <span class="font-body-sm text-[12px] text-on-surface-variant">per Kg selama periode terpilih</span>
           </div>
 
           <div class="glass-card rounded-xl p-md flex flex-col gap-sm">
             <div class="flex items-center justify-between">
-              <span class="font-label-caps text-label-caps text-on-surface-variant">Historical Volatility</span>
+              <span class="font-label-caps text-label-caps text-on-surface-variant">Volatilitas Historis</span>
               <span class="material-symbols-outlined text-on-surface-variant text-[20px]">show_chart</span>
             </div>
             <div class="flex items-baseline gap-sm">
@@ -90,28 +90,28 @@
 
           <div class="glass-card rounded-xl p-md flex flex-col gap-sm">
             <div class="flex items-center justify-between">
-              <span class="font-label-caps text-label-caps text-on-surface-variant">Prediction Accuracy</span>
+              <span class="font-label-caps text-label-caps text-on-surface-variant">Akurasi Prediksi</span>
               <span class="material-symbols-outlined text-on-surface-variant text-[20px]">verified</span>
             </div>
             <div class="flex items-baseline gap-sm">
               <span class="font-data-mono text-[28px] text-cyan-glow">{{ predictionAccuracy }}</span>
             </div>
-            <span class="font-body-sm text-[12px] text-on-surface-variant">Average precision rating</span>
+            <span class="font-body-sm text-[12px] text-on-surface-variant">Tingkat presisi rata-rata</span>
           </div>
         </div>
 
         <!-- Main Chart Card -->
         <div class="glass-card rounded-xl p-md flex flex-col gap-md">
           <div class="flex flex-col md:flex-row md:items-center justify-between gap-sm mb-sm">
-            <h3 class="font-title-md text-title-md text-on-surface">Price Trajectory &amp; Model Audit</h3>
+            <h3 class="font-title-md text-title-md text-on-surface">Trajektori Harga &amp; Audit Model</h3>
             <div class="flex items-center gap-sm bg-white/5 rounded-full p-xs border border-white/10">
               <div class="flex items-center gap-xs px-sm py-xs text-on-surface font-body-sm text-[12px]">
                 <span class="w-2.5 h-2.5 rounded-full bg-white/40"></span>
-                Actual Price
+                Harga Aktual
               </div>
               <div class="flex items-center gap-xs px-sm py-xs text-on-surface font-body-sm text-[12px]">
                 <span class="w-2.5 h-2.5 rounded-full bg-[#00E5FF] shadow-[0_0_6px_#00E5FF] border border-dashed border-[#00E5FF]"></span>
-                Past Predictions
+                Prediksi Sebelumnya
               </div>
             </div>
           </div>
@@ -133,13 +133,13 @@
 
             <!-- Chart States -->
             <div v-if="isLoading" class="absolute inset-0 flex items-center justify-center text-on-surface-variant font-data-mono z-10">
-                Loading historical data...
+                Memuat data historis...
             </div>
             <div v-else-if="error" class="absolute inset-0 flex items-center justify-center text-error font-data-mono z-10">
                 {{ error }}
             </div>
             <div v-else-if="historyLog.length === 0" class="absolute inset-0 flex items-center justify-center text-on-surface-variant font-data-mono z-10">
-                No historical records found.
+                Catatan historis tidak ditemukan.
             </div>
             <div v-else class="w-full h-full relative z-10 py-4 px-2">
               <div class="w-full h-full relative">
@@ -160,8 +160,8 @@
                       <!-- Tooltip -->
                       <div class="absolute bottom-full mb-1 bg-black/85 backdrop-blur-md text-white text-[12px] px-sm py-xs rounded border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none text-center shadow-xl z-30">
                           <span class="text-xs text-white/60 block">{{ item.date }}</span>
-                          <strong>Actual: {{ formatPrice(item.price) }}</strong>
-                          <span class="text-[10px] text-cyan block mt-1">Predicted: {{ formatPrice(item.predicted) }}</span>
+                          <strong>Aktual: {{ formatPrice(item.price) }}</strong>
+                          <span class="text-[10px] text-cyan block mt-1">Prediksi: {{ formatPrice(item.predicted) }}</span>
                       </div>
                       
                       <!-- Point Indicator -->
@@ -174,7 +174,7 @@
             <!-- X-Axis Labels -->
             <div v-if="historyLog.length > 0" class="absolute bottom-0 left-0 w-full flex justify-between text-on-surface-variant font-label-caps text-label-caps -mb-6 px-2">
               <span>{{ startDateLabel }}</span>
-              <span>Midpoint</span>
+              <span>Titik Tengah</span>
               <span>{{ endDateLabel }}</span>
             </div>
           </div>
@@ -183,7 +183,7 @@
         <!-- Historical Log Table -->
         <div class="glass-card rounded-xl overflow-hidden flex flex-col">
           <div class="p-md border-b border-white/10 flex items-center justify-between bg-white/5">
-            <h3 class="font-title-md text-title-md text-on-surface">Historical Log</h3>
+            <h3 class="font-title-md text-title-md text-on-surface">Catatan Historis</h3>
             <button @click="exportToCSV" :disabled="isLoading || historyLog.length === 0" class="text-primary text-[14px] font-medium hover:text-primary-fixed transition-colors flex items-center gap-xs disabled:opacity-50 disabled:pointer-events-none">
               <span class="material-symbols-outlined text-[18px]">download</span> CSV
             </button>
@@ -192,19 +192,19 @@
             <table class="w-full text-left border-collapse min-w-[600px]">
               <thead>
                 <tr class="border-b border-white/10 bg-black/20">
-                  <th class="p-sm pl-md font-label-caps text-label-caps text-on-surface-variant">Date</th>
-                  <th class="p-sm font-label-caps text-label-caps text-on-surface-variant">Commodity</th>
-                  <th class="p-sm font-label-caps text-label-caps text-on-surface-variant">Actual Price</th>
-                  <th class="p-sm font-label-caps text-label-caps text-on-surface-variant">Predicted</th>
-                  <th class="p-sm pr-md font-label-caps text-label-caps text-on-surface-variant text-right">Delta</th>
+                  <th class="p-sm pl-md font-label-caps text-label-caps text-on-surface-variant">Tanggal</th>
+                  <th class="p-sm font-label-caps text-label-caps text-on-surface-variant">Komoditas</th>
+                  <th class="p-sm font-label-caps text-label-caps text-on-surface-variant">Harga Aktual</th>
+                  <th class="p-sm font-label-caps text-label-caps text-on-surface-variant">Prediksi</th>
+                  <th class="p-sm pr-md font-label-caps text-label-caps text-on-surface-variant text-right">Selisih</th>
                 </tr>
               </thead>
               <tbody class="font-body-sm text-body-sm text-on-surface">
                 <tr v-if="isLoading">
-                  <td colspan="5" class="p-md text-center text-on-surface-variant font-data-mono">Loading data...</td>
+                  <td colspan="5" class="p-md text-center text-on-surface-variant font-data-mono">Memuat data...</td>
                 </tr>
                 <tr v-else-if="historyLog.length === 0">
-                  <td colspan="5" class="p-md text-center text-on-surface-variant font-data-mono">No records found.</td>
+                  <td colspan="5" class="p-md text-center text-on-surface-variant font-data-mono">Catatan tidak ditemukan.</td>
                 </tr>
                 <tr v-else v-for="row in historyLog" :key="row.date" class="border-b border-white/5 hover:bg-white/5 transition-colors">
                   <td class="p-sm pl-md text-on-surface-variant font-data-mono">{{ row.date }}</td>
@@ -268,14 +268,15 @@ const fetchHistory = async () => {
     })
 
     const data = res.data || []
-    
-    const processed = data.map(item => ({
-      date: item.date,
-      price: item.actual_price,
-      predicted: item.fitted_price,
-      delta: item.residual_pct,
-      errorPercent: Math.abs(item.residual_pct) / 100
-    }))
+    const processed = data
+      .filter(item => item.actual_price > 0 && item.fitted_price > 0)
+      .map(item => ({
+        date: item.date,
+        price: item.actual_price,
+        predicted: item.fitted_price,
+        delta: item.residual_pct,
+        errorPercent: Math.abs(item.residual_pct) / 100
+      }))
     
     // Sort descending for display in table (newest first)
     historyLog.value = [...processed].reverse()
@@ -306,7 +307,7 @@ const trendDelta = computed(() => {
 
 // Compute Volatility
 const volatilityLevel = computed(() => {
-  if (historyLog.value.length < 2) return { text: 'Low', pct: 25 }
+  if (historyLog.value.length < 2) return { text: 'Rendah', pct: 25 }
   
   const mean = averagePrice.value
   const variance = historyLog.value.reduce((acc, curr) => acc + Math.pow(curr.price - mean, 2), 0) / historyLog.value.length
@@ -314,17 +315,17 @@ const volatilityLevel = computed(() => {
   const cv = stdDev / mean // Coefficient of Variation
   
   if (cv < 0.02) {
-    return { text: 'Low', pct: 25 }
+    return { text: 'Rendah', pct: 25 }
   } else if (cv < 0.05) {
-    return { text: 'Medium', pct: 55 }
+    return { text: 'Sedang', pct: 55 }
   } else {
-    return { text: 'High', pct: 85 }
+    return { text: 'Tinggi', pct: 85 }
   }
 })
 
 // Compute Prediction Accuracy
 const predictionAccuracy = computed(() => {
-  if (historyLog.value.length === 0) return 'N/A'
+  if (historyLog.value.length === 0) return 'Tidak Tersedia'
   const mape = historyLog.value.reduce((acc, r) => acc + Math.abs(r.errorPercent), 0)
               / historyLog.value.length * 100
   return (100 - mape).toFixed(2) + '%'
@@ -338,6 +339,7 @@ const chartMin = computed(() => {
   return Math.min(...prices, ...predicted) * 0.99
 })
 
+// Max price in selected period
 const chartMax = computed(() => {
   if (historyLog.value.length === 0) return 0
   const prices = historyLog.value.map(p => p.price)
@@ -415,7 +417,7 @@ const formatK = (value) => {
 const exportToCSV = () => {
   if (historyLog.value.length === 0) return
   let csvContent = "data:text/csv;charset=utf-8," 
-    + "Date,Commodity,Actual Price,Predicted Price,Delta\n"
+    + "Tanggal,Komoditas,Harga Aktual,Harga Prediksi,Selisih\n"
   
   historyLog.value.forEach(row => {
     csvContent += `${row.date},${selectedCommodity.value},${row.price},${row.predicted},${row.delta.toFixed(2)}%\n`

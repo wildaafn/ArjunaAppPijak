@@ -3,25 +3,25 @@
     <!-- Header -->
     <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-md">
       <div>
-        <h2 class="font-display-lg text-display-lg text-on-surface mb-base">Market Overview</h2>
-        <p class="font-body-lg text-body-lg text-on-surface-variant">Real-time commodity pricing and analytics.</p>
+        <h2 class="font-display-lg text-display-lg text-on-surface mb-base">Ringkasan Pasar</h2>
+        <p class="font-body-lg text-body-lg text-on-surface-variant">Harga komoditas dan analisis waktu nyata (real-time).</p>
       </div>
       <div class="relative w-full md:w-64">
         <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline-variant text-[20px]">search</span>
-        <input v-model="searchQuery" class="w-full bg-surface-container-low/50 border-b border-outline-variant text-on-surface font-body-sm text-body-sm pl-10 pr-sm py-sm focus:outline-none focus:border-[#00E5FF] focus:shadow-[inset_0_-2px_10px_rgba(0,229,255,0.1)] transition-all bg-transparent placeholder-on-surface-variant rounded-t-DEFAULT" placeholder="Search commodities..." type="text"/>
+        <input v-model="searchQuery" class="w-full bg-surface-container-low/50 border-b border-outline-variant text-on-surface font-body-sm text-body-sm pl-10 pr-sm py-sm focus:outline-none focus:border-[#00E5FF] focus:shadow-[inset_0_-2px_10px_rgba(0,229,255,0.1)] transition-all bg-transparent placeholder-on-surface-variant rounded-t-DEFAULT" placeholder="Cari komoditas..." type="text"/>
       </div>
     </header>
 
     <!-- Top Movers (Bento Grid) -->
     <section>
-      <h3 class="font-headline-lg text-headline-lg text-on-surface mb-md">Top Movers (24h)</h3>
-      <div v-if="isLoading" class="text-on-surface-variant font-data-mono">Loading market data...</div>
+      <h3 class="font-headline-lg text-headline-lg text-on-surface mb-md">Perubahan Terbesar (24j)</h3>
+      <div v-if="isLoading" class="text-on-surface-variant font-data-mono">Memuat data pasar...</div>
       <div v-else class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
         <div v-for="mover in topMovers" :key="mover.name" class="glass-card rounded-xl p-md flex flex-col justify-between h-48 relative overflow-hidden group">
           <div class="absolute inset-0 bg-gradient-to-b from-[#00E5FF]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           <div class="flex justify-between items-start relative z-10">
             <div>
-              <span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider block mb-xs">{{ mover.category }}</span>
+              <span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider block mb-xs">{{ categoryMap[mover.category] || mover.category }}</span>
               <h4 class="font-title-md text-title-md text-on-surface font-bold">{{ mover.name }}</h4>
             </div>
             <div :class="mover.change_percentage > 0 ? 'bg-error/10 text-error' : (mover.change_percentage < 0 ? 'bg-[#00E5FF]/10 text-cyan' : 'bg-surface-variant text-on-surface-variant')" class="flex items-center gap-xs px-sm py-xs rounded-full">
@@ -41,23 +41,23 @@
     <!-- Main Commodity Grid -->
     <section>
       <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-lg gap-md">
-        <h3 class="font-headline-lg text-headline-lg text-on-surface">All Commodities</h3>
+        <h3 class="font-headline-lg text-headline-lg text-on-surface">Semua Komoditas</h3>
         <div class="flex flex-wrap gap-sm">
-          <button @click="activeCategory = 'All'" :class="activeCategory === 'All' ? 'border-cyan text-cyan shadow-[0_0_8px_rgba(0,229,255,0.2)]' : 'border-transparent text-on-surface-variant hover:text-on-surface'" class="px-md py-sm rounded-full glass-card font-label-caps text-label-caps transition-colors">All</button>
-          <button @click="activeCategory = 'Grains'" :class="activeCategory === 'Grains' ? 'border-cyan text-cyan shadow-[0_0_8px_rgba(0,229,255,0.2)]' : 'border-transparent text-on-surface-variant hover:text-on-surface'" class="px-md py-sm rounded-full glass-card font-label-caps text-label-caps transition-colors">Grains</button>
-          <button @click="activeCategory = 'Spices'" :class="activeCategory === 'Spices' ? 'border-cyan text-cyan shadow-[0_0_8px_rgba(0,229,255,0.2)]' : 'border-transparent text-on-surface-variant hover:text-on-surface'" class="px-md py-sm rounded-full glass-card font-label-caps text-label-caps transition-colors">Spices</button>
-          <button @click="activeCategory = 'Meat'" :class="activeCategory === 'Meat' ? 'border-cyan text-cyan shadow-[0_0_8px_rgba(0,229,255,0.2)]' : 'border-transparent text-on-surface-variant hover:text-on-surface'" class="px-md py-sm rounded-full glass-card font-label-caps text-label-caps transition-colors">Meat</button>
-          <button @click="activeCategory = 'Groceries'" :class="activeCategory === 'Groceries' ? 'border-cyan text-cyan shadow-[0_0_8px_rgba(0,229,255,0.2)]' : 'border-transparent text-on-surface-variant hover:text-on-surface'" class="px-md py-sm rounded-full glass-card font-label-caps text-label-caps transition-colors">Groceries</button>
+          <button @click="activeCategory = 'All'" :class="activeCategory === 'All' ? 'border-cyan text-cyan shadow-[0_0_8px_rgba(0,229,255,0.2)]' : 'border-transparent text-on-surface-variant hover:text-on-surface'" class="px-md py-sm rounded-full glass-card font-label-caps text-label-caps transition-colors">Semua</button>
+          <button @click="activeCategory = 'Grains'" :class="activeCategory === 'Grains' ? 'border-cyan text-cyan shadow-[0_0_8px_rgba(0,229,255,0.2)]' : 'border-transparent text-on-surface-variant hover:text-on-surface'" class="px-md py-sm rounded-full glass-card font-label-caps text-label-caps transition-colors">Biji-bijian</button>
+          <button @click="activeCategory = 'Spices'" :class="activeCategory === 'Spices' ? 'border-cyan text-cyan shadow-[0_0_8px_rgba(0,229,255,0.2)]' : 'border-transparent text-on-surface-variant hover:text-on-surface'" class="px-md py-sm rounded-full glass-card font-label-caps text-label-caps transition-colors">Rempah-rempah</button>
+          <button @click="activeCategory = 'Meat'" :class="activeCategory === 'Meat' ? 'border-cyan text-cyan shadow-[0_0_8px_rgba(0,229,255,0.2)]' : 'border-transparent text-on-surface-variant hover:text-on-surface'" class="px-md py-sm rounded-full glass-card font-label-caps text-label-caps transition-colors">Daging & Telur</button>
+          <button @click="activeCategory = 'Groceries'" :class="activeCategory === 'Groceries' ? 'border-cyan text-cyan shadow-[0_0_8px_rgba(0,229,255,0.2)]' : 'border-transparent text-on-surface-variant hover:text-on-surface'" class="px-md py-sm rounded-full glass-card font-label-caps text-label-caps transition-colors">Bahan Pokok</button>
         </div>
       </div>
       
-      <div v-if="isLoading" class="text-on-surface-variant font-data-mono">Loading commodities...</div>
-      <div v-else-if="filteredCommodities.length === 0" class="text-on-surface-variant font-data-mono">No commodities found.</div>
+      <div v-if="isLoading" class="text-on-surface-variant font-data-mono">Memuat komoditas...</div>
+      <div v-else-if="filteredCommodities.length === 0" class="text-on-surface-variant font-data-mono">Komoditas tidak ditemukan.</div>
       <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-gutter">
         <div v-for="item in filteredCommodities" :key="item.name" @click="openModal(item)" class="glass-card rounded-lg p-md hover:border-cyan/50 transition-colors duration-300 cursor-pointer">
           <div class="flex justify-between items-start mb-md">
             <h5 class="font-title-md text-title-md text-on-surface font-semibold mr-2 leading-tight" :title="item.name">{{ item.name }}</h5>
-            <span class="font-label-caps text-label-caps text-on-surface-variant bg-white/5 px-sm py-xs rounded whitespace-nowrap">{{ item.category }}</span>
+            <span class="font-label-caps text-label-caps text-on-surface-variant bg-white/5 px-sm py-xs rounded whitespace-nowrap">{{ categoryMap[item.category] || item.category }}</span>
           </div>
           <div class="flex justify-between items-end mb-sm">
             <p class="font-data-mono text-data-mono text-[20px] text-on-surface">{{ formatPrice(item.latest_price) }}</p>
@@ -80,7 +80,7 @@
           <div class="flex justify-between items-start">
             <div>
               <h3 class="text-2xl font-bold text-on-surface leading-tight pr-8">{{ selectedItem.name }}</h3>
-              <p class="text-on-surface-variant font-data-mono mt-1">Price History (Monthly, {{ selectedYearFilter === 'All' ? '2021 - Sekarang' : selectedYearFilter }})</p>
+              <p class="text-on-surface-variant font-data-mono mt-1">Riwayat Harga (Bulanan, {{ selectedYearFilter === 'All' ? '2021 - Sekarang' : selectedYearFilter }})</p>
             </div>
             <button @click="closeModal" class="material-symbols-outlined text-on-surface-variant hover:text-white transition-colors absolute top-md right-md bg-white/5 rounded-full p-2">close</button>
           </div>
@@ -92,7 +92,7 @@
                     @click="selectYearFilter(year)"
                     :class="selectedYearFilter === year ? 'bg-cyan/20 text-cyan border-cyan/30 shadow-[0_0_8px_rgba(0,229,255,0.15)]' : 'border-transparent text-on-surface-variant hover:bg-white/5 hover:text-on-surface'"
                     class="px-sm py-1.5 rounded-md text-xs font-semibold border transition-all duration-200">
-              {{ year }}
+              {{ year === 'All' ? 'Semua' : year }}
             </button>
           </div>
           
@@ -110,10 +110,10 @@
             </div>
 
             <div v-if="isModalLoading" class="absolute inset-0 flex items-center justify-center font-data-mono text-on-surface-variant z-10">
-              Loading history...
+              Memuat riwayat...
             </div>
             <div v-else-if="itemHistory.length === 0" class="absolute inset-0 flex items-center justify-center font-data-mono text-on-surface-variant z-10">
-              No historical data.
+              Tidak ada data historis.
             </div>
             <div v-else class="w-full h-full relative z-10 py-4 px-2">
               <div class="w-full h-full relative">
@@ -151,6 +151,16 @@ const commodities = ref([])
 const isLoading = ref(true)
 const searchQuery = ref('')
 const activeCategory = ref('All')
+
+// category translations map
+const categoryMap = {
+  'All': 'Semua',
+  'Grains': 'Biji-bijian',
+  'Spices': 'Rempah-rempah',
+  'Meat': 'Daging & Telur',
+  'Groceries': 'Bahan Pokok',
+  'Other': 'Lainnya'
+}
 
 // Modal State
 const selectedItem = ref(null)

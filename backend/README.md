@@ -19,7 +19,7 @@ cp .env.example .env
 ```
 Sesuaikan variabel berikut di dalam `.env`:
 *   `DATABASE_HOST`: Set ke `postgres` jika menggunakan PostgreSQL di dalam container docker pada network yang sama. Set ke `localhost` atau `host.docker.internal` jika menggunakan database lokal di mesin host.
-*   `GEMMA_API_KEY`: Masukkan API Key dari Google AI Studio untuk menyalakan fitur AI Insight.
+*   `NVIDIA_API_KEY`: Masukkan API Key dari NVIDIA API Catalog (build.nvidia.com) untuk menyalakan fitur AI Insight.
 
 ---
 

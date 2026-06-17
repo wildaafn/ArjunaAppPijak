@@ -28,7 +28,7 @@ class Settings(BaseSettings):
     ALLOWED_ORIGINS: str = "*"
 
     # AI Insight Configuration
-    GEMMA_API_KEY: str = ""
+    NVIDIA_API_KEY: str = ""
 
     class Config:
         env_file = ".env"

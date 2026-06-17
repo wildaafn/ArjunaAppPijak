@@ -1,0 +1,260 @@
+{
+    "Bawang Merah|insight|0": {
+        "timestamp": 1781673594.7074773,
+        "data": {
+            "masyarakat": "Beli bawang merah sekarang atau dalam jumlah cukup, hindari penumpukan; manfaatkan promo, atau pilih alternatif seperti bawang putih bila harga naik.",
+            "pedagang": "Naikkan harga jual 2‑3% segera, tingkatkan stok sebelum harga naik lebih, tawarkan paket hemat, dan pertimbangkan kontrak pasokan tetap dengan petani.",
+            "disclaimer": "Analisis taktis bertenaga GPT OSS dari NVIDIA NIM."
+        }
+    },
+    "Bawang Merah Ukuran Sedang|insight|0": {
+        "timestamp": 1781673617.3379498,
+        "data": {
+            "masyarakat": "Beli bawang merah dalam jumlah cukup, manfaatkan promo atau beli grosir, karena harga diperkirakan naik 1.4% dalam seminggu.",
+            "pedagang": "Tingkatkan stok sekarang, tawarkan paket bundling atau diskon terbatas, manfaatkan kenaikan harga untuk margin lebih tinggi.",
+            "disclaimer": "Analisis taktis bertenaga GPT OSS dari NVIDIA NIM.",
+            "last_updated_train": "17 Juni 2026 pukul 12:19 WIB",
+            "last_updated_fetch": "17 Juni 2026 pukul 12:06 WIB"
+        }
+    },
+    "Bawang Putih|insight|0": {
+        "timestamp": 1781673642.4932923,
+        "data": {
+            "masyarakat": "Manfaatkan harga stabil, beli bawang putih dalam jumlah cukup untuk kebutuhan mingguan, simpan di tempat sejuk agar tidak cepat busuk.",
+            "pedagang": "Stokkan bawang putih sesuai permintaan, tawarkan paket promo atau bundling dengan bahan lain, pantau pasokan untuk menghindari kehabisan saat permintaan naik.",
+            "disclaimer": "Analisis taktis bertenaga GPT OSS dari NVIDIA NIM."
+        }
+    },
+    "Bawang Putih Ukuran Sedang|insight|0": {
+        "timestamp": 1781673671.6029713,
+        "data": {
+            "masyarakat": "Beli dalam jumlah cukup, manfaatkan promo, simpan di tempat sejuk, hindari penumpukan.",
+            "pedagang": "Jaga stok optimal, tawarkan paket bundling, gunakan harga stabil untuk promo diskon kecil, perpanjang masa simpan dengan pendingin.",
+            "disclaimer": "Analisis taktis bertenaga GPT OSS dari NVIDIA NIM."
+        }
+    },
+    "Beras Kualitas Medium I|insight|0": {
+        "timestamp": 1781673679.8569014,
+        "data": {
+            "masyarakat": "Harga Beras Kualitas Medium I terpantau naik sebesar 3.5% hari ini. Meskipun demikian, harga diproyeksikan turun sebesar 0.3% dalam sepekan ke depan. Kabar baik, tunda belanja grosir sampai harga mendekati titik terendah agar lebih efisien.",
+            "pedagang": "Harga Beras Kualitas Medium I terpantau naik sebesar 3.5% hari ini. Meskipun demikian, harga diproyeksikan turun sebesar 0.3% dalam sepekan ke depan. Penurunan harga memberi ruang margin keuntungan yang lebih lebar. Manfaatkan momen ini untuk menaikkan volume penjualan.",
+            "disclaimer": "Rekomendasi taktis berbasis peramalan model SARIMAX.",
+            "last_updated_train": "17 Juni 2026 pukul 12:19 WIB",
+            "last_updated_fetch": "17 Juni 2026 pukul 12:06 WIB"
+        }
+    },
+    "Beras|insight|0": {
+        "timestamp": 1781673701.1481397,
+        "data": {
+            "masyarakat": "Beli beras dalam jumlah lebih banyak sekarang, manfaatkan harga sedikit turun, simpan dalam kemasan kedap udara untuk menghindari kerusakan.",
+            "pedagang": "Kurangi pembelian stok beras, fokus pada menu berbasis bahan lain, manfaatkan penurunan harga untuk promo kecil, hindari overstock.",
+            "disclaimer": "Analisis taktis bertenaga GPT OSS dari NVIDIA NIM."
+        }
+    },
+    "Beras Kualitas Bawah I|insight|0": {
+        "timestamp": 1781673721.416072,
+        "data": {
+            "masyarakat": "Tunda pembelian beras selama 2‑3 hari; harga diproyeksikan turun 0,5%, sehingga dapat menghemat hingga Rp 35/kg.",
+            "pedagang": "Beli stok beras dalam jumlah besar sekarang sebelum harga turun lebih jauh; manfaatkan margin kecil untuk promo diskon menarik pelanggan.",
+            "disclaimer": "Analisis taktis bertenaga GPT OSS dari NVIDIA NIM."
+        }
+    },
+    "Beras Kualitas Bawah II|insight|0": {
+        "timestamp": 1781673748.6429844,
+        "data": {
+            "masyarakat": "Pantau harga, beli saat turun ke ~Rp14,445/kg dalam seminggu; manfaatkan promo atau beli dalam jumlah besar untuk mengurangi biaya per kg.",
+            "pedagang": "Tunda pembelian stok besar, tunggu penurunan harga; manfaatkan margin lebih tinggi dengan menjual paket nasi atau produk olahan berbasis beras kualitas bawah.",
+            "disclaimer": "Analisis taktis bertenaga GPT OSS dari NVIDIA NIM.",
+            "last_updated_train": "17 Juni 2026 pukul 12:19 WIB",
+            "last_updated_fetch": "17 Juni 2026 pukul 12:06 WIB"
+        }
+    },
+    "Beras Kualitas Medium II|insight|0": {
+        "timestamp": 1781673769.505458,
+        "data": {
+            "masyarakat": "Beli beras sekarang, manfaatkan penurunan harga; simpan di tempat kering, beli dalam jumlah cukup untuk mengurangi frekuensi pembelian.",
+            "pedagang": "Tunda pembelian besar, tunggu penurunan lebih lanjut; gunakan stok minimal, promosikan paket hemat untuk menarik konsumen.",
+            "disclaimer": "Analisis taktis bertenaga GPT OSS dari NVIDIA NIM.",
+            "last_updated_train": "17 Juni 2026 pukul 12:19 WIB",
+            "last_updated_fetch": "17 Juni 2026 pukul 12:06 WIB"
+        }
+    },
+    "Beras Kualitas Super I|insight|0": {
+        "timestamp": 1781673789.7711186,
+        "data": {
+            "masyarakat": "Tunggu penurunan harga, beli dalam 5‑7 hari atau manfaatkan promo bulk untuk mengurangi biaya per kg.",
+            "pedagang": "Kurangi pembelian stok, jual dengan margin kecil, manfaatkan diskon pemasok, dan promosikan paket hemat untuk menarik konsumen.",
+            "disclaimer": "Analisis taktis bertenaga GPT OSS dari NVIDIA NIM."
+        }
+    },
+    "Beras Kualitas Super II|insight|0": {
+        "timestamp": 1781673810.8053727,
+        "data": {
+            "masyarakat": "Beli beras sekarang, manfaatkan penurunan harga, simpan dalam wadah kedap udara untuk menghindari pemborosan, atau beli dalam kemasan besar untuk stok 1‑2 bulan.",
+            "pedagang": "Kurangi pembelian harian, tingkatkan promosi paket hemat, gunakan beras super II untuk menu premium, dan jual stok sedikit lebih tinggi sebelum harga turun lebih lanjut.",
+            "disclaimer": "Analisis taktis bertenaga GPT OSS dari NVIDIA NIM."
+        }
+    },
+    "Cabai Merah|insight|0": {
+        "timestamp": 1781673831.63266,
+        "data": {
+            "masyarakat": "Beli cabai merah sekarang atau simpan dalam freezer; hindari penurunan daya beli karena harga diprediksi naik 1,4% dalam seminggu.",
+            "pedagang": "Tingkatkan harga jual 2‑3% sekarang, perbanyak stok dari pemasok terpercaya, dan promosikan paket hemat untuk menjaga margin saat harga naik.",
+            "disclaimer": "Analisis taktis bertenaga GPT OSS dari NVIDIA NIM."
+        }
+    },
+    "Cabai Merah Besar|insight|0": {
+        "timestamp": 1781673856.5232744,
+        "data": {
+            "masyarakat": "Beli cabai merah besar sekarang, hindari penimbunan; gunakan dalam masakan atau simpan beku untuk mengurangi biaya saat harga naik.",
+            "pedagang": "Tingkatkan stok minimal 5 kg, jual paket campuran dengan margin 2‑3%; promosikan paket hemat untuk mengunci harga sebelum naik.",
+            "disclaimer": "Analisis taktis bertenaga GPT OSS dari NVIDIA NIM."
+        }
+    },
+    "Cabai Merah Keriting |insight|0": {
+        "timestamp": 1781673875.431154,
+        "data": {
+            "masyarakat": "Beli cabai sekarang, hindari penimbunan; simpan sebagian di freezer untuk penggunaan minggu depan.",
+            "pedagang": "Tingkatkan harga jual 2-3% sekarang, stok cukup; promosikan paket hemat dengan cabai untuk meningkatkan margin.",
+            "disclaimer": "Analisis taktis bertenaga GPT OSS dari NVIDIA NIM."
+        }
+    },
+    "Cabai Rawit|insight|0": {
+        "timestamp": 1781673896.6516001,
+        "data": {
+            "masyarakat": "Beli cabai rawit sekarang atau simpan stok kecil; harga hanya naik 0.8% dalam seminggu, jadi beli sebelum kena.",
+            "pedagang": "Tingkatkan margin 5% dengan menambah paket combo cabai rawit + sambal; beli stok sekarang, jual saat harga naik.",
+            "disclaimer": "Analisis taktis bertenaga GPT OSS dari NVIDIA NIM."
+        }
+    },
+    "Cabai Rawit Hijau|insight|0": {
+        "timestamp": 1781673928.364998,
+        "data": {
+            "masyarakat": "Harga Cabai Rawit Hijau terpantau naik sebesar 16.0% hari ini. Sejalan dengan tren tersebut, harga diprediksi naik sebesar 0.2% dalam sepekan ke depan. Sebaiknya stok kebutuhan belanja Anda sedikit lebih awal untuk berhemat.",
+            "pedagang": "Harga Cabai Rawit Hijau terpantau naik sebesar 16.0% hari ini. Sejalan dengan tren tersebut, harga diprediksi naik sebesar 0.2% dalam sepekan ke depan. Tren kenaikan ini akan menaikkan modal operasional. Pertimbangkan menyetok bahan sebelum harga naik atau menyesuaikan porsi menu.",
+            "disclaimer": "Rekomendasi taktis berbasis peramalan model SARIMAX."
+        }
+    },
+    "Cabai Rawit Merah|insight|0": {
+        "timestamp": 1781673951.5997026,
+        "data": {
+            "masyarakat": "Beli cabai rawit dalam jumlah kecil sekarang, atau tunggu 1 minggu untuk harga sedikit naik; gunakan alternatif seperti cabai lokal atau bumbu lain untuk mengurangi biaya.",
+            "pedagang": "Tingkatkan stok sekarang, manfaatkan kenaikan harga 1.3% untuk margin lebih; tawarkan paket promo combo dengan bahan lain, atau jual dalam kemasan kecil untuk volume tinggi.",
+            "disclaimer": "Analisis taktis bertenaga GPT OSS dari NVIDIA NIM."
+        }
+    },
+    "Daging Ayam|insight|0": {
+        "timestamp": 1781673980.5723684,
+        "data": {
+            "masyarakat": "Manfaatkan harga stabil, beli dalam jumlah lebih banyak atau stokkan untuk kebutuhan mingguan, hindari pembelian berlebih yang tidak terpakai.",
+            "pedagang": "Jaga margin dengan promo paket hemat, manfaatkan pasokan stabil untuk persediaan optimal, hindari penurunan harga dengan penawaran nilai tambah.",
+            "disclaimer": "Analisis taktis bertenaga GPT OSS dari NVIDIA NIM."
+        }
+    },
+    "Daging Ayam Ras Segar|insight|0": {
+        "timestamp": 1781674004.2314644,
+        "data": {
+            "masyarakat": "Beli dalam jumlah kecil atau manfaatkan promo; hindari stok berlebih karena harga diprediksi tetap stabil.",
+            "pedagang": "Jaga stok minimal, manfaatkan promosi beli 10 kg gratis 0.5 kg, tawarkan paket hemat, hindari penurunan margin.",
+            "disclaimer": "Analisis taktis bertenaga GPT OSS dari NVIDIA NIM."
+        }
+    },
+    "Daging Sapi|insight|0": {
+        "timestamp": 1781674032.7427037,
+        "data": {
+            "masyarakat": "Manfaatkan harga stabil, beli daging sapi dalam jumlah cukup untuk kebutuhan mingguan, simpan beku, atau pilih potongan lebih murah; hindari penimbunan berlebih.",
+            "pedagang": "Jaga harga jual stabil, tawarkan paket promo bundling dengan bahan pelengkap, manfaatkan pasokan murah, dan promosikan nilai gizi untuk menarik konsumen.",
+            "disclaimer": "Analisis taktis bertenaga GPT OSS dari NVIDIA NIM."
+        }
+    },
+    "Daging Sapi Kualitas 1|insight|0": {
+        "timestamp": 1781674052.49081,
+        "data": {
+            "masyarakat": "Manfaatkan harga stabil, beli daging sapi kualitas 1 dalam jumlah cukup untuk kebutuhan mingguan, simpan beku, hindari penimbunan berlebih.",
+            "pedagang": "Jaga harga jual, tawarkan paket hemat atau promo bundling, kontrol porsi, manfaatkan pasokan stabil untuk mengoptimalkan margin.",
+            "disclaimer": "Analisis taktis bertenaga GPT OSS dari NVIDIA NIM.",
+            "last_updated_train": "17 Juni 2026 pukul 12:19 WIB",
+            "last_updated_fetch": "17 Juni 2026 pukul 12:06 WIB"
+        }
+    },
+    "Daging Sapi Kualitas 2|insight|0": {
+        "timestamp": 1781674077.142744,
+        "data": {
+            "masyarakat": "Manfaatkan kestabilan harga, beli daging sapi kualitas 2 sekarang dalam jumlah moderat, atau pilih potongan lebih kecil untuk mengurangi biaya.",
+            "pedagang": "Jaga harga stabil, tawarkan paket bundling atau promo volume kecil, pantau stok, dan siapkan strategi penyesuaian bila harga turun lebih dari 0.2%.",
+            "disclaimer": "Analisis taktis bertenaga GPT OSS dari NVIDIA NIM."
+        }
+    },
+    "Gula Pasir|insight|0": {
+        "timestamp": 1781674097.068381,
+        "data": {
+            "masyarakat": "Beli gula dalam kemasan besar atau stok sekarang, karena harga diprediksi turun sedikit; hindari beli kecil yang lebih mahal.",
+            "pedagang": "Tunda pembelian besar, manfaatkan penurunan harga 0.2% untuk mengisi stok minimal, atau tawarkan promo paket dengan margin tetap.",
+            "disclaimer": "Analisis taktis bertenaga GPT OSS dari NVIDIA NIM."
+        }
+    },
+    "Gula Pasir Kualitas Premium|insight|0": {
+        "timestamp": 1781674116.9890206,
+        "data": {
+            "masyarakat": "Tunda pembelian, pantau harga; beli saat diskon atau bulk setelah penurunan lebih lanjut.",
+            "pedagang": "Kurangi stok gula premium, gunakan alternatif gula biasa, tawarkan promo paket untuk mengurangi margin.",
+            "disclaimer": "Analisis taktis bertenaga GPT OSS dari NVIDIA NIM."
+        }
+    },
+    "Gula Pasir Lokal|insight|0": {
+        "timestamp": 1781674385.638624,
+        "data": {
+            "masyarakat": "Harga Gula Pasir Lokal terpantau naik sebesar 0.5% hari ini. Meskipun demikian, harga diproyeksikan turun sebesar 0.1% dalam sepekan ke depan. Kabar baik, tunda belanja grosir sampai harga mendekati titik terendah agar lebih efisien.",
+            "pedagang": "Harga Gula Pasir Lokal terpantau naik sebesar 0.5% hari ini. Meskipun demikian, harga diproyeksikan turun sebesar 0.1% dalam sepekan ke depan. Penurunan harga memberi ruang margin keuntungan yang lebih lebar. Manfaatkan momen ini untuk menaikkan volume penjualan.",
+            "disclaimer": "Rekomendasi taktis berbasis peramalan model SARIMAX."
+        }
+    },
+    "Minyak Goreng|insight|0": {
+        "timestamp": 1781674418.296013,
+        "data": {
+            "masyarakat": "Harga Minyak Goreng terpantau naik sebesar 0.9% hari ini. Meskipun demikian, harga diprediksi stabil dalam beberapa hari ke depan. Anda dapat membelinya secara berkala sesuai kebutuhan rumah tangga biasa.",
+            "pedagang": "Harga Minyak Goreng terpantau naik sebesar 0.9% hari ini. Meskipun demikian, harga diprediksi stabil dalam beberapa hari ke depan. Kondisi harga relatif aman. Pertahankan stok inventori normal tanpa perlu khawatir gejolak biaya jangka pendek.",
+            "disclaimer": "Rekomendasi taktis berbasis peramalan model SARIMAX."
+        }
+    },
+    "Minyak Goreng Curah|insight|0": {
+        "timestamp": 1781676985.723458,
+        "data": {
+            "masyarakat": "Harga Minyak Goreng Curah mengalami penurunan sebesar 0.2% hari ini. Meskipun demikian, harga diprediksi stabil dalam beberapa hari ke depan. Anda dapat membelinya secara berkala sesuai kebutuhan rumah tangga biasa.",
+            "pedagang": "Harga Minyak Goreng Curah mengalami penurunan sebesar 0.2% hari ini. Meskipun demikian, harga diprediksi stabil dalam beberapa hari ke depan. Kondisi harga relatif aman. Pertahankan stok inventori normal tanpa perlu khawatir gejolak biaya jangka pendek.",
+            "disclaimer": "Rekomendasi taktis berbasis peramalan model SARIMAX."
+        }
+    },
+    "Minyak Goreng Kemasan Bermerk 1|insight|0": {
+        "timestamp": 1781677017.8880353,
+        "data": {
+            "masyarakat": "Harga Minyak Goreng Kemasan Bermerk 1 mengalami penurunan sebesar 1.2% hari ini. Meskipun demikian, harga diprediksi naik sebesar 0.2% dalam sepekan ke depan. Sebaiknya stok kebutuhan belanja Anda sedikit lebih awal untuk berhemat.",
+            "pedagang": "Harga Minyak Goreng Kemasan Bermerk 1 mengalami penurunan sebesar 1.2% hari ini. Meskipun demikian, harga diprediksi naik sebesar 0.2% dalam sepekan ke depan. Tren kenaikan ini akan menaikkan modal operasional. Pertimbangkan menyetok bahan sebelum harga naik atau menyesuaikan porsi menu.",
+            "disclaimer": "Rekomendasi taktis berbasis peramalan model SARIMAX."
+        }
+    },
+    "Minyak Goreng Kemasan Bermerk 2|insight|0": {
+        "timestamp": 1781677050.040771,
+        "data": {
+            "masyarakat": "Harga Minyak Goreng Kemasan Bermerk 2 terpantau naik sebesar 0.2% hari ini. Meskipun demikian, harga diprediksi stabil dalam beberapa hari ke depan. Anda dapat membelinya secara berkala sesuai kebutuhan rumah tangga biasa.",
+            "pedagang": "Harga Minyak Goreng Kemasan Bermerk 2 terpantau naik sebesar 0.2% hari ini. Meskipun demikian, harga diprediksi stabil dalam beberapa hari ke depan. Kondisi harga relatif aman. Pertahankan stok inventori normal tanpa perlu khawatir gejolak biaya jangka pendek.",
+            "disclaimer": "Rekomendasi taktis berbasis peramalan model SARIMAX."
+        }
+    },
+    "Telur Ayam|insight|0": {
+        "timestamp": 1781677082.151104,
+        "data": {
+            "masyarakat": "Harga Telur Ayam mengalami penurunan sebesar 2.2% hari ini. Meskipun demikian, harga diprediksi stabil dalam beberapa hari ke depan. Anda dapat membelinya secara berkala sesuai kebutuhan rumah tangga biasa.",
+            "pedagang": "Harga Telur Ayam mengalami penurunan sebesar 2.2% hari ini. Meskipun demikian, harga diprediksi stabil dalam beberapa hari ke depan. Kondisi harga relatif aman. Pertahankan stok inventori normal tanpa perlu khawatir gejolak biaya jangka pendek.",
+            "disclaimer": "Rekomendasi taktis berbasis peramalan model SARIMAX."
+        }
+    },
+    "Telur Ayam Ras Segar|insight|0": {
+        "timestamp": 1781677114.2583888,
+        "data": {
+            "masyarakat": "Harga Telur Ayam Ras Segar terpantau naik sebesar 2.4% hari ini. Meskipun demikian, harga diprediksi stabil dalam beberapa hari ke depan. Anda dapat membelinya secara berkala sesuai kebutuhan rumah tangga biasa.",
+            "pedagang": "Harga Telur Ayam Ras Segar terpantau naik sebesar 2.4% hari ini. Meskipun demikian, harga diprediksi stabil dalam beberapa hari ke depan. Kondisi harga relatif aman. Pertahankan stok inventori normal tanpa perlu khawatir gejolak biaya jangka pendek.",
+            "disclaimer": "Rekomendasi taktis berbasis peramalan model SARIMAX."
+        }
+    }
+}

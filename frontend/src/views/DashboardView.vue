@@ -4,7 +4,7 @@
     <header class="mb-lg">
       <h2 class="font-display-lg text-display-lg text-on-surface mb-xs">Analisis Harga & Tinjauan Pangan Nusantara</h2>
       <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
-        Advanced AI-driven forecasting for staple commodities across regions. Adjust parameters to visualize future market stability.
+        Peramalan berbasis kecerdasan buatan (AI) tingkat lanjut untuk komoditas pangan pokok lintas wilayah. Sesuaikan parameter untuk memvisualisasikan stabilitas pasar di masa depan.
       </p>
     </header>
 
@@ -17,12 +17,12 @@
           <div>
             <h3 class="font-title-md text-title-md text-primary mb-md flex items-center gap-xs">
               <span class="material-symbols-outlined text-cyan text-[20px]">tune</span>
-              Forecast Parameters
+              Parameter Peramalan
             </h3>
             
             <!-- Dropdown -->
             <div class="flex flex-col gap-xs mb-md">
-              <label class="font-label-caps text-label-caps text-on-surface-variant">Commodity</label>
+              <label class="font-label-caps text-label-caps text-on-surface-variant">Komoditas</label>
               <div class="relative">
                 <select v-model="selectedCommodity" class="w-full bg-white/5 border border-white/10 rounded-lg py-sm px-md text-on-surface font-body-sm text-body-sm appearance-none focus:outline-none focus:border-cyan transition-colors">
                   <option v-for="c in commodities" :key="c" :value="c" class="bg-surface text-on-surface">{{ c }}</option>
@@ -34,8 +34,8 @@
             <!-- Slider -->
             <div class="flex flex-col gap-sm">
               <div class="flex justify-between items-end">
-                <label class="font-label-caps text-label-caps text-on-surface-variant">Prediction Horizon</label>
-                <span class="font-data-mono text-data-mono text-cyan" id="horizon-val">{{ horizon }} Days</span>
+                <label class="font-label-caps text-label-caps text-on-surface-variant">Horizon Prediksi</label>
+                <span class="font-data-mono text-data-mono text-cyan" id="horizon-val">{{ horizon }} Hari</span>
               </div>
               <input class="w-full" max="7" min="1" type="range" v-model="horizon" />
             </div>
@@ -43,7 +43,7 @@
           
           <!-- Action -->
           <button @click="fetchData" :disabled="isLoading || isAiLoading" class="w-full py-sm px-lg bg-secondary-container text-on-secondary-container font-headline-lg-mobile text-headline-lg-mobile font-bold rounded-lg shadow-lg hover:brightness-110 active:scale-95 transition-all mt-xs disabled:opacity-50 disabled:pointer-events-none">
-            {{ isLoading || isAiLoading ? 'Processing...' : 'Generate Forecast' }}
+            {{ isLoading || isAiLoading ? 'Memproses...' : 'Buat Prediksi' }}
           </button>
         </div>
         
@@ -57,7 +57,7 @@
             <div class="min-h-[60px]">
               <span v-if="isLoading || isAiLoading" class="flex items-center gap-sm font-body-sm text-body-sm text-on-surface-variant">
                 <span class="w-4 h-4 border-2 border-cyan border-t-transparent rounded-full animate-spin"></span>
-                Generating business analysis insight...
+                Menghasilkan rekomendasi bisnis...
               </span>
               <span v-else-if="error || aiInsightError" class="text-error font-body-sm text-body-sm">
                 {{ error || aiInsightError }}
@@ -88,9 +88,19 @@
                   </p>
                 </div>
                 
-                <!-- Disclaimer -->
-                <div v-if="aiInsight.disclaimer" class="text-[10px] text-on-surface-variant font-light italic mt-xs">
-                  {{ aiInsight.disclaimer }}
+                <!-- Disclaimer & Sync Info -->
+                <div style="margin-top: 8px; display: flex; flex-direction: column; gap: 4px;">
+                  <div v-if="aiInsight.disclaimer" class="text-xs text-primary font-normal italic">
+                    {{ aiInsight.disclaimer }}
+                  </div>
+                  <div v-if="aiInsight.last_updated_fetch || aiInsight.last_updated_train" class="text-[11px] text-on-surface/80 font-normal flex flex-col gap-0.5">
+                    <span v-if="aiInsight.last_updated_fetch && aiInsight.last_updated_fetch !== '-'">
+                      • Pengambilan data terakhir: {{ aiInsight.last_updated_fetch }}
+                    </span>
+                    <span v-if="aiInsight.last_updated_train && aiInsight.last_updated_train !== '-'">
+                      • Pelatihan model terakhir: {{ aiInsight.last_updated_train }}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -99,9 +109,9 @@
           <div class="mt-auto pt-md border-t border-white/10 flex items-center justify-between">
             <div class="flex items-center gap-xs">
               <div class="w-1.5 h-1.5 rounded-full bg-cyan animate-pulse"></div>
-              <span class="text-[10px] font-label-caps text-on-surface-variant uppercase tracking-wider">Model Status</span>
+              <span class="text-[10px] font-label-caps text-on-surface-variant uppercase tracking-wider">Status Model</span>
             </div>
-            <span class="text-xs font-data-mono text-cyan">Active / SARIMAX</span>
+            <span class="text-xs font-data-mono text-cyan">Aktif / SARIMAX</span>
           </div>
         </div>
       </div>
@@ -111,21 +121,21 @@
         <!-- Summary KPI Cards -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-sm">
           <div class="glass-panel rounded-xl p-md flex flex-col justify-between">
-            <span class="font-label-caps text-label-caps text-on-surface-variant mb-sm block">Last Historical Price</span>
+            <span class="font-label-caps text-label-caps text-on-surface-variant mb-sm block">Harga Historis Terakhir</span>
             <div class="text-2xl font-bold font-data-mono text-on-surface">{{ formatPrice(lastHistoricalPrice) }}<span class="text-sm font-normal text-on-surface-variant ml-1">/kg</span></div>
           </div>
           <div class="glass-panel rounded-xl p-md flex flex-col justify-between border-b-2 border-b-cyan">
-            <span class="font-label-caps text-label-caps text-on-surface-variant mb-sm block">Predicted (Day+{{ horizon }})</span>
+            <span class="font-label-caps text-label-caps text-on-surface-variant mb-sm block">Prediksi (Hari+{{ horizon }})</span>
             <div class="text-2xl font-bold font-data-mono text-cyan">{{ formatPrice(lastPredictedPrice) }}<span class="text-sm font-normal text-on-surface-variant ml-1">/kg</span></div>
           </div>
           <div class="glass-panel rounded-xl p-md flex flex-col justify-between">
-            <span class="font-label-caps text-label-caps text-on-surface-variant mb-sm block">Forecast Trend</span>
+            <span class="font-label-caps text-label-caps text-on-surface-variant mb-sm block">Tren Prediksi</span>
             <div class="flex items-center gap-sm">
               <span :class="trendPercentage > 0 ? 'text-error' : 'text-primary'" class="material-symbols-outlined text-3xl">
                 {{ trendPercentage > 0 ? 'trending_up' : 'trending_down' }}
               </span>
               <span :class="trendPercentage > 0 ? 'text-error' : 'text-primary'" class="text-2xl font-bold">
-                {{ trendPercentage > 0 ? 'Upward' : 'Downward' }}
+                {{ trendPercentage > 0 ? 'Naik' : 'Turun' }}
               </span>
             </div>
           </div>
@@ -134,15 +144,15 @@
         <!-- Main Chart Area -->
         <div class="glass-panel rounded-xl p-md flex-1 min-h-[400px] flex flex-col">
           <div class="flex justify-between items-center mb-md">
-            <h3 class="font-title-md text-title-md text-primary">Price Trajectory Simulation</h3>
+            <h3 class="font-title-md text-title-md text-primary">Simulasi Trajektori Harga</h3>
             <div class="flex gap-sm">
               <div class="flex items-center gap-xs">
                 <div class="w-3 h-3 rounded-full bg-white/30"></div>
-                <span class="font-label-caps text-label-caps text-on-surface-variant">Historical</span>
+                <span class="font-label-caps text-label-caps text-on-surface-variant">Historis</span>
               </div>
               <div class="flex items-center gap-xs">
                 <div class="w-3 h-3 rounded-full bg-cyan cyan-glow"></div>
-                <span class="font-label-caps text-label-caps text-on-surface-variant">Prediction</span>
+                <span class="font-label-caps text-label-caps text-on-surface-variant">Prediksi</span>
               </div>
             </div>
           </div>
@@ -165,7 +175,7 @@
 
             <!-- Data Chart -->
             <div v-if="isLoading" class="absolute inset-0 flex items-center justify-center text-on-surface-variant font-data-mono z-10">
-                Loading forecast data...
+                Memuat data prediksi...
             </div>
             <div v-else-if="error" class="absolute inset-0 flex items-center justify-center text-error font-data-mono z-10">
                 {{ error }}
@@ -189,7 +199,7 @@
                     <div class="absolute bottom-full mb-1 bg-black/80 backdrop-blur-md text-white text-[12px] px-sm py-xs rounded border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none text-center shadow-xl z-30">
                         <span class="text-xs text-white/60 block">{{ item.date }}</span>
                         <strong>{{ formatPrice(item.price) }}</strong>
-                        <span class="text-[10px] text-white/50 block mt-1">{{ item.isHistorical ? 'Historical' : 'Prediction' }}</span>
+                        <span class="text-[10px] text-white/50 block mt-1">{{ item.isHistorical ? 'Historis' : 'Prediksi' }}</span>
                     </div>
                     
                     <!-- Point Indicator -->
@@ -201,9 +211,9 @@
 
             <!-- X-Axis Labels -->
             <div class="absolute bottom-0 left-0 w-full flex justify-between text-on-surface-variant font-label-caps text-label-caps -mb-6 px-2">
-              <span>-14d</span>
-              <span>Today</span>
-              <span>+{{ horizon }}d</span>
+              <span>-14h</span>
+              <span>Hari Ini</span>
+              <span>+{{ horizon }}h</span>
             </div>
           </div>
         </div>

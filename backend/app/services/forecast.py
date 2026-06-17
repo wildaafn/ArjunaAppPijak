@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np
 import time
 import logging
+import os
+import json
 from datetime import timedelta
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 from sqlalchemy.orm import Session
@@ -78,16 +80,138 @@ class ForecastCache:
     def clear(self):
         self._cache.clear()
 
-_forecast_cache = ForecastCache()  # TTL 12 jam untuk ramalan masa depan
-_audit_cache = ForecastCache(ttl_seconds=3600)  # TTL 1 jam untuk audit in-sample
-_insight_cache = ForecastCache(ttl_seconds=3600)  # TTL 1 jam untuk AI Insight
+class PersistentForecastCache(ForecastCache):
+    def __init__(self, filepath, ttl_seconds=86400):
+        super().__init__(ttl_seconds=ttl_seconds)
+        self.filepath = filepath
+        self.load()
 
-def load_commodity_data_from_db(db: Session, subcategory: str) -> pd.Series:
+    def load(self):
+        if os.path.exists(self.filepath):
+            try:
+                with open(self.filepath, "r", encoding="utf-8") as f:
+                    serialized = json.load(f)
+                    for k, v in serialized.items():
+                        parts = k.split("|")
+                        if len(parts) == 3:
+                            subcat, m_type, steps = parts[0], parts[1], int(parts[2])
+                            self._cache[(subcat, m_type, steps)] = (v["timestamp"], v["data"])
+                logger.info(f"Berhasil memuat persistent cache dari {self.filepath}")
+            except Exception as e:
+                logger.error(f"Gagal memuat persistent cache dari file: {e}")
+
+    def save(self):
+        try:
+            os.makedirs(os.path.dirname(self.filepath), exist_ok=True)
+            serialized = {}
+            for (subcat, m_type, steps), (timestamp, data) in self._cache.items():
+                if time.time() - timestamp < self.ttl:
+                    serialized[f"{subcat}|{m_type}|{steps}"] = {
+                        "timestamp": timestamp,
+                        "data": data
+                    }
+            with open(self.filepath, "w", encoding="utf-8") as f:
+                json.dump(serialized, f, indent=4, ensure_ascii=False)
+        except Exception as e:
+            logger.error(f"Gagal menyimpan persistent cache ke file: {e}")
+
+    def set(self, subcategory: str, model_type: str, steps: int, data):
+        super().set(subcategory, model_type, steps, data)
+        self.save()
+
+    def clear(self):
+        super().clear()
+        if os.path.exists(self.filepath):
+            try:
+                os.remove(self.filepath)
+                logger.info(f"File persistent cache {self.filepath} berhasil dihapus.")
+            except Exception as e:
+                logger.error(f"Gagal menghapus file persistent cache: {e}")
+
+_forecast_cache = ForecastCache(ttl_seconds=86400)  # TTL 24 jam untuk ramalan masa depan
+_audit_cache = ForecastCache(ttl_seconds=86400)  # TTL 24 jam untuk audit in-sample
+_insight_cache = PersistentForecastCache(
+    filepath=os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "../dataset/ai_insight_cache.json"),
+    ttl_seconds=86400
+)
+
+class ModelParamsCache:
+    def __init__(self, filepath=None):
+        if filepath is None:
+            filepath = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "../dataset/model_params.json")
+        self.filepath = filepath
+        self._cache = {}
+        self.load()
+
+    def load(self):
+        if os.path.exists(self.filepath):
+            try:
+                with open(self.filepath, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                    for k, v in data.items():
+                        parts = k.split("|")
+                        if len(parts) == 2:
+                            subcat, m_type = parts[0], parts[1]
+                            self._cache[(subcat, m_type)] = np.array(v, dtype=float)
+                logger.info(f"Berhasil memuat model_params dari {self.filepath}")
+            except Exception as e:
+                logger.error(f"Gagal memuat model_params dari file: {e}")
+
+    def save(self):
+        try:
+            os.makedirs(os.path.dirname(self.filepath), exist_ok=True)
+            data_to_save = {}
+            for (subcat, m_type), params in self._cache.items():
+                if hasattr(params, "tolist"):
+                    val_list = params.tolist()
+                else:
+                    val_list = [float(x) for x in params]
+                data_to_save[f"{subcat}|{m_type}"] = val_list
+            with open(self.filepath, "w", encoding="utf-8") as f:
+                json.dump(data_to_save, f, indent=4, ensure_ascii=False)
+            logger.info(f"Berhasil menyimpan model_params ke {self.filepath}")
+        except Exception as e:
+            logger.error(f"Gagal menyimpan model_params ke file: {e}")
+
+    def get(self, subcategory: str, model_type: str):
+        key = (subcategory, model_type)
+        return self._cache.get(key)
+
+    def set(self, subcategory: str, model_type: str, params):
+        key = (subcategory, model_type)
+        if isinstance(params, np.ndarray):
+            self._cache[key] = params
+        else:
+            self._cache[key] = np.array(params, dtype=float)
+        self.save()
+
+    def clear(self):
+        self._cache.clear()
+        if os.path.exists(self.filepath):
+            try:
+                os.remove(self.filepath)
+                logger.info(f"File model_params {self.filepath} berhasil dihapus.")
+            except Exception as e:
+                logger.error(f"Gagal menghapus file model_params: {e}")
+
+_model_params_cache = ModelParamsCache()
+
+def load_commodity_data_from_db(db: Session, subcategory: str, limit_days: int = None) -> pd.Series:
     commodity = db.query(Commodity).filter(Commodity.name == subcategory).first()
     if not commodity:
         raise ValueError(f"Subkategori '{subcategory}' tidak ditemukan di database.")
         
-    prices = db.query(CommodityPrice).filter(CommodityPrice.commodity_id == commodity.id).order_by(CommodityPrice.date).all()
+    if limit_days:
+        from sqlalchemy import desc
+        prices = db.query(CommodityPrice).filter(
+            CommodityPrice.commodity_id == commodity.id
+        ).order_by(desc(CommodityPrice.date)).limit(limit_days).all()
+        prices.reverse()
+    else:
+        prices = db.query(CommodityPrice).filter(
+            CommodityPrice.commodity_id == commodity.id
+        ).order_by(CommodityPrice.date).all()
+        
     if not prices:
         raise ValueError(f"Tidak ada data historis untuk subkategori '{subcategory}'.")
         
@@ -99,7 +223,8 @@ def load_commodity_data_from_db(db: Session, subcategory: str) -> pd.Series:
     series = series.asfreq('D').interpolate(method='linear').ffill().bfill()
     return series
 
-def get_in_sample_fit(db: Session, subcategory: str, days: int = 30) -> list:
+
+def get_in_sample_fit(db: Session, subcategory: str, days: int = 30, refit: bool = False) -> list:
     """
     Mengembalikan in-sample fitted values dari model SARIMAX untuk audit akurasi historis.
     
@@ -111,6 +236,7 @@ def get_in_sample_fit(db: Session, subcategory: str, days: int = 30) -> list:
         db: Database session.
         subcategory: Nama subkategori komoditas.
         days: Jumlah hari terakhir yang dikembalikan (default 30).
+        refit: Jika True, memaksa melatih ulang parameter model (fitting dari awal).
 
     Returns:
         List of dicts: [{date, actual_price, fitted_price, residual_pct}]
@@ -121,7 +247,7 @@ def get_in_sample_fit(db: Session, subcategory: str, days: int = 30) -> list:
         fits_by_date = {}
         for child in children:
             try:
-                child_fit = get_in_sample_fit(db, child, days)
+                child_fit = get_in_sample_fit(db, child, days, refit=refit)
                 for pt in child_fit:
                     d = pt["date"]
                     if d not in fits_by_date:
@@ -150,12 +276,13 @@ def get_in_sample_fit(db: Session, subcategory: str, days: int = 30) -> list:
     if subcategory not in MODEL_CONFIG:
         raise ValueError(f"Subkategori '{subcategory}' tidak didukung oleh model.")
 
-    # Cek cache audit terlebih dahulu
-    cached = _audit_cache.get(subcategory, "audit", days)
-    if cached is not None:
-        return cached
+    # Cek cache audit terlebih dahulu (hanya jika refit=False)
+    if not refit:
+        cached = _audit_cache.get(subcategory, "audit", days)
+        if cached is not None:
+            return cached
 
-    series = load_commodity_data_from_db(db, subcategory)
+    series = load_commodity_data_from_db(db, subcategory, limit_days=730)
 
     orders = MODEL_CONFIG[subcategory]["sarimax"]
     order = tuple(orders["order"])
@@ -177,7 +304,24 @@ def get_in_sample_fit(db: Session, subcategory: str, days: int = 30) -> list:
             order=order, seasonal_order=seasonal_order,
             enforce_stationarity=True, enforce_invertibility=True
         )
-        results = model.fit(disp=False)
+        
+        start_params = None if refit else _model_params_cache.get(subcategory, "sarimax")
+        
+        if start_params is not None:
+            # Update Data dengan parameter tetap (Smooth)
+            try:
+                results = model.smooth(start_params)
+                logger.info(f"get_in_sample_fit: Menggunakan parameter tetap (Smooth) untuk {subcategory}")
+            except Exception as smooth_err:
+                logger.warning(f"get_in_sample_fit smooth gagal untuk {subcategory}: {smooth_err}. Melakukan refit...")
+                results = model.fit(disp=False)
+                _model_params_cache.set(subcategory, "sarimax", results.params)
+        else:
+            # Refit Parameter
+            results = model.fit(disp=False)
+            _model_params_cache.set(subcategory, "sarimax", results.params)
+            logger.info(f"get_in_sample_fit: Melakukan refit parameter untuk {subcategory}")
+            
         fitted_log = results.fittedvalues
     except Exception:
         # Fallback ke ARIMA(1,1,0) jika model utama gagal konvergensi
@@ -196,8 +340,8 @@ def get_in_sample_fit(db: Session, subcategory: str, days: int = 30) -> list:
     for date in slice_series.index:
         actual = float(slice_series[date])
         fit_val = slice_fitted.get(date)
-        if fit_val is None or np.isnan(fit_val):
-            fit_val = actual  # Fallback ke actual jika fitted NaN (biasanya titik awal AR)
+        if fit_val is None or np.isnan(fit_val) or fit_val <= 0.0:
+            fit_val = actual  # Fallback ke actual jika fitted NaN atau <= 0 (biasanya titik awal AR)
         fit_val = float(fit_val)
         residual_pct = round(((actual - fit_val) / actual) * 100, 4) if actual > 0 else 0.0
         result.append({
@@ -212,7 +356,7 @@ def get_in_sample_fit(db: Session, subcategory: str, days: int = 30) -> list:
     return result
 
 
-def generate_forecast(db: Session, subcategory: str, model_type: str, steps: int):
+def generate_forecast(db: Session, subcategory: str, model_type: str, steps: int, refit: bool = False):
     # If it is a parent category, average the forecasts of its children
     if subcategory in PARENT_CHILD_MAP:
         children = PARENT_CHILD_MAP[subcategory]
@@ -223,7 +367,7 @@ def generate_forecast(db: Session, subcategory: str, model_type: str, steps: int
         for child in children:
             try:
                 # Call generate_forecast recursively for child
-                fc = generate_forecast(db, child, model_type, steps)
+                fc = generate_forecast(db, child, model_type, steps, refit=refit)
                 last_prices.append(fc["last_historical_price"])
                 last_dates.append(fc["last_historical_date"])
                 for pred in fc["predictions"]:
@@ -270,12 +414,13 @@ def generate_forecast(db: Session, subcategory: str, model_type: str, steps: int
     if subcategory not in MODEL_CONFIG:
         raise ValueError(f"Subkategori '{subcategory}' tidak didukung oleh model.")
 
-    # Cek cache terlebih dahulu
-    cached_result = _forecast_cache.get(subcategory, model_type, steps)
-    if cached_result is not None:
-        return cached_result
+    # Cek cache terlebih dahulu (hanya jika refit=False)
+    if not refit:
+        cached_result = _forecast_cache.get(subcategory, model_type, steps)
+        if cached_result is not None:
+            return cached_result
 
-    series = load_commodity_data_from_db(db, subcategory)
+    series = load_commodity_data_from_db(db, subcategory, limit_days=730)
     last_date = series.index[-1]
     last_price = float(series.iloc[-1])
     
@@ -290,6 +435,8 @@ def generate_forecast(db: Session, subcategory: str, model_type: str, steps: int
     # Generate Tanggal Masa Depan
     future_dates = [last_date + timedelta(days=i) for i in range(1, steps + 1)]
     
+    start_params = None if refit else _model_params_cache.get(subcategory, model_type)
+    
     # Fitting dan Peramalan
     try:
         if model_type == "sarimax":
@@ -300,10 +447,21 @@ def generate_forecast(db: Session, subcategory: str, model_type: str, steps: int
                 name="is_weekend"
             )
             
-            # Fitting SARIMAX
+            # Fitting/smoothing SARIMAX
             model = SARIMAX(series_log, exog=exog_train, order=order, seasonal_order=seasonal_order,
                             enforce_stationarity=True, enforce_invertibility=True)
-            results = model.fit(disp=False)
+            if start_params is not None:
+                try:
+                    results = model.smooth(start_params)
+                    logger.info(f"generate_forecast: Menggunakan parameter tetap (Smooth) untuk {subcategory} ({model_type})")
+                except Exception as smooth_err:
+                    logger.warning(f"generate_forecast smooth gagal untuk {subcategory}: {smooth_err}. Melakukan refit...")
+                    results = model.fit(disp=False)
+                    _model_params_cache.set(subcategory, model_type, results.params)
+            else:
+                results = model.fit(disp=False)
+                _model_params_cache.set(subcategory, model_type, results.params)
+                logger.info(f"generate_forecast: Melakukan refit parameter untuk {subcategory} ({model_type})")
             
             # Siapkan exog kalender untuk masa depan (forecast horizon)
             exog_forecast = pd.Series(
@@ -316,10 +474,21 @@ def generate_forecast(db: Session, subcategory: str, model_type: str, steps: int
             forecast_log = results.forecast(steps=steps, exog=exog_forecast)
             
         else:
-            # Fitting SARIMA Murni
+            # Fitting/smoothing SARIMA Murni
             model = SARIMAX(series_log, order=order, seasonal_order=seasonal_order,
                             enforce_stationarity=True, enforce_invertibility=True)
-            results = model.fit(disp=False)
+            if start_params is not None:
+                try:
+                    results = model.smooth(start_params)
+                    logger.info(f"generate_forecast: Menggunakan parameter tetap (Smooth) untuk {subcategory} ({model_type})")
+                except Exception as smooth_err:
+                    logger.warning(f"generate_forecast smooth gagal untuk {subcategory}: {smooth_err}. Melakukan refit...")
+                    results = model.fit(disp=False)
+                    _model_params_cache.set(subcategory, model_type, results.params)
+            else:
+                results = model.fit(disp=False)
+                _model_params_cache.set(subcategory, model_type, results.params)
+                logger.info(f"generate_forecast: Melakukan refit parameter untuk {subcategory} ({model_type})")
             
             # Forecast
             forecast_log = results.forecast(steps=steps)
@@ -406,14 +575,25 @@ def extract_text_from_response(data: dict) -> str:
         raise ValueError("Gagal mengekstrak teks respons.")
     return content_text.strip()
 
+def clean_json_text(text: str) -> str:
+    """Helper untuk membersihkan tag codeblock markdown dari string JSON."""
+    text = text.strip()
+    if text.startswith("```json"):
+        text = text[7:]
+    elif text.startswith("```"):
+        text = text[3:]
+    if text.endswith("```"):
+        text = text[:-3]
+    return text.strip()
+
 def get_ai_insight(subcategory: str, trend: float, horizon: int, current_price: float, predicted_price: float, db: Session = None) -> dict:
     """
-    Menghasilkan analisis bisnis taktis menggunakan Google Gemma 4 (31B) dengan caching.
-    Menerapkan fallback ke model gemini-1.5-flash jika limit gemma terlampaui (RPD=2).
+    Menghasilkan analisis bisnis taktis menggunakan NVIDIA NIM (Llama 3.1 70B) dengan caching.
+    Menerapkan fallback ke model Llama 3.1 8B jika terjadi error.
     Jika API key tidak valid atau terjadi error, kembalikan rule-based fallback secara anggun.
     """
-    cache_key_str = f"{subcategory}_{trend}_{horizon}_{current_price}_{predicted_price}"
-    steps_hash = abs(hash(cache_key_str)) % (10**8)
+    # Menggunakan cache key sederhana berbasis subkategori untuk menghindari miss akibat rounding float
+    steps_hash = 0
     cached = _insight_cache.get(subcategory, "insight", steps_hash)
     if cached is not None:
         return cached
@@ -474,7 +654,7 @@ def get_ai_insight(subcategory: str, trend: float, horizon: int, current_price: 
     
     # Check if API Key is placeholder or empty
     from app.core.config import settings
-    if not settings.GEMMA_API_KEY or "your_gemma_api_key" in settings.GEMMA_API_KEY:
+    if not settings.NVIDIA_API_KEY or "your_nvidia_api_key" in settings.NVIDIA_API_KEY:
         # Fallback langsung ke rule-based jika key belum dikonfigurasi
         logger.info(f"API Key belum dikonfigurasi. Menggunakan fallback rule-based untuk {subcategory}.")
         from app.services.market_summary import generate_rule_based_insight
@@ -502,46 +682,58 @@ def get_ai_insight(subcategory: str, trend: float, horizon: int, current_price: 
         "}"
     )
 
-    headers = {"Content-Type": "application/json"}
-    body = {
-        "contents": [{
-            "parts": [{
-                "text": prompt
-            }]
-        }]
+    headers = {
+        "Authorization": f"Bearer {settings.NVIDIA_API_KEY}",
+        "Content-Type": "application/json"
     }
 
     import urllib.request
     import urllib.error
     import json
 
-    # Skenario 1: Coba gemma-4-31b-it
+    # Skenario 1: Coba NVIDIA NIM dengan Google Gemma 4 31B IT
     try:
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemma-4-31b-it:generateContent?key={settings.GEMMA_API_KEY}"
+        url = "https://integrate.api.nvidia.com/v1/chat/completions"
+        body = {
+            "model": "google/gemma-4-31b-it",
+            "messages": [
+                {"role": "user", "content": prompt}
+            ],
+            "temperature": 0.2,
+            "max_tokens": 1024
+        }
         req = urllib.request.Request(
             url,
             data=json.dumps(body).encode("utf-8"),
             headers=headers,
             method="POST"
         )
-        with urllib.request.urlopen(req, timeout=20) as response:
+        with urllib.request.urlopen(req, timeout=8) as response:
             res_body = response.read().decode("utf-8")
             data = json.loads(res_body)
-            result_text = extract_text_from_response(data)
-            parsed_json = json.loads(result_text)
-            parsed_json["disclaimer"] = "Analisis taktis bertenaga Google Gemma 4 (31B)."
+            result_text = data["choices"][0]["message"]["content"]
+            cleaned_text = clean_json_text(result_text)
+            parsed_json = json.loads(cleaned_text)
+            parsed_json["disclaimer"] = "Analisis taktis bertenaga Google Gemma dari NVIDIA NIM."
             _insight_cache.set(subcategory, "insight", steps_hash, parsed_json)
-            logger.info("AI Insight (JSON) berhasil dibuat menggunakan model gemma-4-31b-it.")
+            logger.info("AI Insight (JSON) berhasil dibuat menggunakan NVIDIA NIM (Google Gemma).")
             return parsed_json
             
     except Exception as e:
-        logger.warning(f"Percobaan gemma-4-31b-it gagal: {str(e)}. Melakukan fallback ke gemini-2.5-flash...")
+        logger.warning(f"Percobaan NVIDIA Google Gemma gagal: {str(e)}. Melakukan fallback ke OpenAI GPT-OSS-120B...")
         
-        # Skenario 2: Fallback ke gemini-2.5-flash
+        # Skenario 2: Fallback ke OpenAI GPT-OSS-120B
         try:
-            fallback_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={settings.GEMMA_API_KEY}"
+            body = {
+                "model": "openai/gpt-oss-120b",
+                "messages": [
+                    {"role": "user", "content": prompt}
+                ],
+                "temperature": 0.2,
+                "max_tokens": 1024
+            }
             fallback_req = urllib.request.Request(
-                fallback_url,
+                url,
                 data=json.dumps(body).encode("utf-8"),
                 headers=headers,
                 method="POST"
@@ -549,14 +741,15 @@ def get_ai_insight(subcategory: str, trend: float, horizon: int, current_price: 
             with urllib.request.urlopen(fallback_req, timeout=15) as response:
                 res_body = response.read().decode("utf-8")
                 data = json.loads(res_body)
-                result_text = extract_text_from_response(data)
-                parsed_json = json.loads(result_text)
-                parsed_json["disclaimer"] = "Analisis taktis bertenaga Google Gemini 2.5 Flash."
+                result_text = data["choices"][0]["message"]["content"]
+                cleaned_text = clean_json_text(result_text)
+                parsed_json = json.loads(cleaned_text)
+                parsed_json["disclaimer"] = "Analisis taktis bertenaga GPT OSS dari NVIDIA NIM."
                 _insight_cache.set(subcategory, "insight", steps_hash, parsed_json)
-                logger.info("AI Insight (JSON) berhasil dibuat menggunakan fallback model gemini-2.5-flash.")
+                logger.info("AI Insight (JSON) berhasil dibuat menggunakan fallback model OpenAI GPT-OSS-120B.")
                 return parsed_json
         except Exception as fallback_err:
-            logger.error(f"Gagal mengambil AI Insight dari Gemma maupun Gemini: {str(fallback_err)}. Mengaktifkan rule-based fallback.")
+            logger.error(f"Gagal mengambil AI Insight dari NVIDIA NIM Google Gemma maupun GPT OSS: {str(fallback_err)}. Mengaktifkan rule-based fallback.")
             # Fallback akhir yang 100% aman (Rule-based)
             from app.services.market_summary import generate_rule_based_insight
             fallback_res = generate_rule_based_insight(
@@ -567,3 +760,4 @@ def get_ai_insight(subcategory: str, trend: float, horizon: int, current_price: 
             )
             _insight_cache.set(subcategory, "insight", steps_hash, fallback_res)
             return fallback_res
+
