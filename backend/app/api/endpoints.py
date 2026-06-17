@@ -19,7 +19,7 @@ def list_commodities():
 @router.get("/predict", response_model=ForecastResponse, tags=["Forecasting"])
 def get_prediction(
     subcategory: str = Query(..., description="Nama subkategori pangan strategis"),
-    model_type: str = Query("sarimax", regex="^(sarima|sarimax)$", description="Jenis model: sarima (univariate) atau sarimax (eksogen kalender)"),
+    model_type: str = Query("sarimax", pattern="^(sarima|sarimax)$", description="Jenis model: sarima (univariate) atau sarimax (eksogen kalender)"),
     steps: int = Query(7, ge=1, le=30, description="Jumlah hari ke depan yang ingin diprediksi"),
     db: Session = Depends(get_db)
 ):

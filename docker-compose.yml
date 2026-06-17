@@ -1,0 +1,79 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: arjuna_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: arjuna_pijak
+    ports:
+      - "5432:5432"
+    volumes:
+      - arjuna_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d arjuna_pijak"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - arjuna-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: arjuna_backend
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./backend/.env
+    volumes:
+      - ./backend:/app
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - arjuna-network
+
+  seeder:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: arjuna_seeder
+    env_file:
+      - ./backend/.env
+    volumes:
+      - ./backend:/app
+    command: python seeder.py
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - arjuna-network
+    profiles:
+      - seed
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: arjuna_frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_URL=http://localhost:8000
+    depends_on:
+      - backend
+    networks:
+      - arjuna-network
+
+volumes:
+  arjuna_db_data:
+
+networks:
+  arjuna-network:
+    driver: bridge
