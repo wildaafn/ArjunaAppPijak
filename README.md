@@ -154,5 +154,6 @@ Proyek ini terintegrasi sepenuhnya dengan **Google Cloud Build** (`cloudbuild.ya
 
 ## 📝 Kontributor & Lisensi
 
-Dibuat oleh **Wildaafn**. Seluruh kode dilisensikan di bawah lisensi MIT.
+Dibuat oleh **Tim Arjuna Pijak Capstone (Rafly, Risky, wilda dan wildan)**. Seluruh kode dilisensikan di bawah lisensi MIT.
+
 
