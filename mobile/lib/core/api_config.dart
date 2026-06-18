@@ -1,6 +1,6 @@
 class ApiConfig {
   static const String baseUrl =
-      'https://api.arjunapijak.web.id'; // Change to server IP for physical device
+      'https://api.arjunapijak.web.id'; // Routed via Cloudflare Worker proxy
   static const String marketSummary = '/api/market-summary';
   static const String globalAnalysis = '/api/market-summary/global-analysis';
   static const String historical = '/historical';

@@ -88,6 +88,7 @@ steps:
   # ─── BUILD MOBILE (FLUTTER WEB) ──────────────────────────────────
   - name: 'gcr.io/cloud-builders/docker'
     id: 'build-mobile'
+    secretEnv: ['GNEWS_API_KEY']
     args:
       - 'build'
       - '-t'
@@ -96,6 +97,8 @@ steps:
       - 'asia-southeast2-docker.pkg.dev/$PROJECT_ID/arjuna-pijak/mobile:latest'
       - '-f'
       - 'mobile/Dockerfile.prod'
+      - '--build-arg'
+      - 'GNEWS_API_KEY=$$GNEWS_API_KEY'
       - './mobile'
 
   # ─── PUSH MOBILE ──────────────────────────────────────────────────
@@ -130,6 +133,11 @@ images:
   - 'asia-southeast2-docker.pkg.dev/$PROJECT_ID/arjuna-pijak/backend:$COMMIT_SHA'
   - 'asia-southeast2-docker.pkg.dev/$PROJECT_ID/arjuna-pijak/frontend:$COMMIT_SHA'
   - 'asia-southeast2-docker.pkg.dev/$PROJECT_ID/arjuna-pijak/mobile:$COMMIT_SHA'
+
+availableSecrets:
+  secretManager:
+    - versionName: projects/$PROJECT_ID/secrets/arjuna-gnews-key/versions/latest
+      env: 'GNEWS_API_KEY'
 
 options:
   logging: CLOUD_LOGGING_ONLY

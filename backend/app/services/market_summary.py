@@ -78,6 +78,135 @@ def generate_rule_based_insight(name: str, trend: str, forecast_pct: float, hist
         "disclaimer": "Rekomendasi taktis berbasis peramalan model SARIMAX."
     }
 
+_global_analysis_cache = {}
+
+def get_global_ai_analysis(db: Session, commodities_data: list, latest_date_str: str) -> str:
+    """
+    Menghasilkan analisis ringkas pasar pangan nasional secara keseluruhan menggunakan NVIDIA NIM (Google Gemma).
+    Menggunakan caching berbasis tanggal agar tidak memicu pemanggilan API berulang kali.
+    """
+    if latest_date_str in _global_analysis_cache:
+        logger.info("Mengambil global analysis dari cache.")
+        return _global_analysis_cache[latest_date_str]
+
+    from app.core.config import settings
+    default_fallback = "Analisis harga pangan pokok nasional menunjukkan stabilitas pada kelompok beras, namun fluktuasi minor terdeteksi pada komoditas cabai dan bawang karena faktor cuaca musiman."
+
+    if not settings.NVIDIA_API_KEY or "your_nvidia_api_key" in settings.NVIDIA_API_KEY:
+        logger.info("NVIDIA_API_KEY tidak dikonfigurasi. Menggunakan fallback analisis bawaan.")
+        return default_fallback
+
+    # Siapkan ringkasan komoditas untuk prompt
+    summary_parts = []
+    for item in commodities_data:
+        name = item["name"]
+        price = item["current_price"]
+        unit = item["unit"]
+        trend = item["trend"]
+        pct = item["price_changes"].get("day_7", 0.0)
+        summary_parts.append(f"- {name}: Rp {price:,.0f}/{unit} (Tren sepekan: {trend} {abs(pct):.1f}%)")
+
+    summary_list_text = "\n".join(summary_parts)
+
+    prompt = (
+        "Anda adalah pakar analis ekonomi dan pangan nasional.\n"
+        "Berdasarkan data pergerakan rata-rata harga pangan pokok tingkat nasional berikut:\n\n"
+        f"{summary_list_text}\n\n"
+        "Berikan analisis ringkas, profesional, dan padat mengenai situasi harga pangan nasional saat ini serta proyeksi singkat ke depan dalam maksimal 60 kata.\n"
+        "Respon wajib langsung berupa teks analisis saja tanpa tanda kutip di awal/akhir, tanpa markdown codeblock, dan tanpa embel-embel kalimat pembuka/penutup."
+    )
+
+    headers = {
+        "Authorization": f"Bearer {settings.NVIDIA_API_KEY}",
+        "Content-Type": "application/json"
+    }
+
+    import urllib.request
+    import urllib.error
+    import json
+
+    url = "https://integrate.api.nvidia.com/v1/chat/completions"
+    
+    # Coba Google Gemma 3 12B IT (Model modern, seimbang antara performa & kecepatan)
+    try:
+        body = {
+            "model": "google/gemma-3-12b-it",
+            "messages": [
+                {"role": "user", "content": prompt}
+            ],
+            "temperature": 0.2,
+            "max_tokens": 256
+        }
+        req = urllib.request.Request(
+            url,
+            data=json.dumps(body).encode("utf-8"),
+            headers=headers,
+            method="POST"
+        )
+        with urllib.request.urlopen(req, timeout=40) as response:
+            res_body = response.read().decode("utf-8")
+            data = json.loads(res_body)
+            choices = data.get("choices", [])
+            result_text = None
+            if choices:
+                content = choices[0].get("message", {}).get("content")
+                if content:
+                    result_text = content.strip()
+            
+            if result_text:
+                # Bersihkan jika ada codeblock
+                if result_text.startswith("```"):
+                    result_text = "\n".join([line for line in result_text.split("\n") if not line.startswith("```")])
+                result_text = result_text.strip()
+                
+                _global_analysis_cache[latest_date_str] = result_text
+                logger.info("Global AI Analysis berhasil dibuat menggunakan NVIDIA NIM (Google Gemma 3 12B).")
+                return result_text
+    except Exception as e:
+        logger.warning(f"Percobaan NVIDIA Google Gemma 3 12B untuk global analysis gagal: {str(e)}. Menggunakan fallback Google Gemma 2 2B...")
+        
+        # Fallback 1: Google Gemma 2 2B IT (Sangat ringan, minim resiko timeout)
+        try:
+            body = {
+                "model": "google/gemma-2-2b-it",
+                "messages": [
+                    {"role": "user", "content": prompt}
+                ],
+                "temperature": 0.2,
+                "max_tokens": 256
+            }
+            fallback_req = urllib.request.Request(
+                url,
+                data=json.dumps(body).encode("utf-8"),
+                headers=headers,
+                method="POST"
+            )
+            with urllib.request.urlopen(fallback_req, timeout=30) as response:
+                res_body = response.read().decode("utf-8")
+                data = json.loads(res_body)
+                choices = data.get("choices", [])
+                result_text = None
+                if choices:
+                    content = choices[0].get("message", {}).get("content")
+                    if content:
+                        result_text = content.strip()
+                
+                if result_text:
+                    # Bersihkan jika ada codeblock
+                    if result_text.startswith("```"):
+                        result_text = "\n".join([line for line in result_text.split("\n") if not line.startswith("```")])
+                    result_text = result_text.strip()
+                    
+                    _global_analysis_cache[latest_date_str] = result_text
+                    logger.info("Global AI Analysis berhasil dibuat menggunakan fallback model Google Gemma 2 2B.")
+                    return result_text
+        except Exception as fallback_err:
+            logger.error(f"Gagal mengambil Global AI Analysis dari NVIDIA NIM Google Gemma 3 12B maupun Gemma 2 2B: {str(fallback_err)}.")
+            
+    # Fallback akhir jika API bermasalah/gagal
+    _global_analysis_cache[latest_date_str] = default_fallback
+    return default_fallback
+
 def get_consolidated_market_summary(db: Session) -> dict:
     commodities_data = []
     
@@ -192,20 +321,44 @@ def get_consolidated_market_summary(db: Session) -> dict:
             "sub_commodities": sub_commodities_list
         })
         
+    latest_date_str = latest_date.strftime("%Y-%m-%d")
+    default_fallback = "Analisis harga pangan pokok nasional menunjukkan stabilitas pada kelompok beras, namun fluktuasi minor terdeteksi pada komoditas cabai dan bawang karena faktor cuaca musiman."
+
     metadata = {
-        "updated_at": latest_date.strftime("%Y-%m-%d"),
-        "global_analysis": "Analisis harga pangan pokok nasional menunjukkan stabilitas pada kelompok beras, namun fluktuasi minor terdeteksi pada komoditas cabai dan bawang karena faktor cuaca musiman.",
+        "updated_at": latest_date_str,
+        "global_analysis": default_fallback,
         "disclaimer": "Prediksi harga ini dihasilkan oleh kecerdasan buatan (SARIMAX Model) untuk membantu perkiraan perencanaan belanja. Keputusan pembelian tetap di tangan konsumen.",
         "about_us": {
             "title": "Arjuna Pijak API - Forecasting Engine",
             "app_name": "Arjuna",
             "description": "Analisis Harga & Tinjauan Pangan Nusantara",
             "version": "1.0.0",
-            "developer": "Capstone Team"
+            "developer": "Capstone Team - PJK-GU106"
         }
     }
     
     return {
         "commodities": commodities_data,
         "metadata": metadata
+    }
+
+def get_global_market_analysis(db: Session) -> dict:
+    """
+    Mengambil analisis pasar pangan global secara dinamis (AI Insight).
+    Fungsi ini berjalan secara independen agar tidak memperlambat loading summary komoditas.
+    """
+    latest_price_rec = db.query(models.CommodityPrice).order_by(models.CommodityPrice.date.desc()).first()
+    if not latest_price_rec:
+        return {"global_analysis": "", "updated_at": ""}
+        
+    latest_date_str = latest_price_rec.date.strftime("%Y-%m-%d")
+    
+    # Ambil data komoditas teragregasi untuk feed prompt
+    summary = get_consolidated_market_summary(db)
+    commodities_data = summary.get("commodities", [])
+    
+    global_analysis_text = get_global_ai_analysis(db, commodities_data, latest_date_str)
+    return {
+        "global_analysis": global_analysis_text,
+        "updated_at": latest_date_str
     }
