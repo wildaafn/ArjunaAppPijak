@@ -17,11 +17,17 @@ class NewsArticle {
   });
 
   factory NewsArticle.fromJson(Map<String, dynamic> json) {
+    final rawImage = json['image'] as String?;
+    String? proxiedImage;
+    if (rawImage != null && rawImage.isNotEmpty) {
+      proxiedImage = 'https://images.weserv.nl/?url=${Uri.encodeComponent(rawImage.trim())}&w=400&fit=cover';
+    }
+
     return NewsArticle(
       title: json['title'] as String? ?? '',
       description: json['description'] as String? ?? '',
       url: json['url'] as String? ?? '',
-      imageUrl: json['image'] as String?,
+      imageUrl: proxiedImage,
       publishedAt: DateTime.tryParse(json['publishedAt'] as String? ?? '') ??
           DateTime.now(),
       sourceName:
