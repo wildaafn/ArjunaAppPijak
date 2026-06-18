@@ -9,151 +9,107 @@
 [![Google Cloud](https://img.shields.io/badge/Cloud-Google%20Cloud-4285F4?style=for-the-badge&logo=googlecloud&logoColor=white)](https://cloud.google.com/)
 [![Cloudflare](https://img.shields.io/badge/Proxy-Cloudflare-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)](https://www.cloudflare.com/)
 
-**Arjuna Pijak** adalah platform cerdas untuk memantau, menganalisis, dan memprediksi pergerakan harga komoditas pangan di berbagai daerah di Indonesia. Aplikasi ini mengintegrasikan pemodelan statistik tingkat lanjut dengan antarmuka yang modern, dinamis, dan responsif.
-
-🔗 **Tautan Akses:**
-- 🖥️ **Web Utama**: [https://arjunapijak.web.id](https://arjunapijak.web.id)
-- 📱 **Mobile Web**: [https://mobile.arjunapijak.web.id](https://mobile.arjunapijak.web.id)
+**Arjuna Pijak** adalah platform cerdas berbasis kecerdasan buatan (*Artificial Intelligence*) dan analisis prediktif yang dirancang untuk memantau, menganalisis, serta memprediksi pergerakan harga komoditas pangan strategis di berbagai wilayah Indonesia. Platform ini mengintegrasikan pemodelan statistik tingkat lanjut dengan antarmuka pengguna yang modern, dinamis, dan intuitif guna membantu pelaku UMKM, masyarakat umum, serta pengambil kebijakan dalam mengantisipasi gejolak harga pangan.
 
 ---
 
-## ✨ Fitur Utama
+## 🔗 Tautan Akses Aplikasi
 
-- 📈 **Prediksi Harga Pangan**: Menggunakan model statistik runtun waktu (*Time Series Forecasting*) berbasis Python (Statsmodels/Pandas) untuk memberikan estimasi harga komoditas pangan di masa mendatang.
-- 📑 **Ringkasan Pasar AI (Market Summary)**: Analisis berbasis AI untuk merangkum sentimen pasar, pergerakan harga signifikan, dan kondisi ketahanan pangan secara otomatis.
-- 🔄 **Sinkronisasi Data Otomatis**: Layanan terjadwal menggunakan `APScheduler` untuk memperbarui data komoditas pangan secara *real-time* dari sumber data terpercaya.
-- 📊 **Dashboard Interaktif**: Visualisasi grafik interaktif yang mudah dipahami oleh masyarakat luas maupun pengambil kebijakan.
-- ⚡ **Performa Kilat**: Kombinasi *Vite + Vue 3* untuk rendering instan dan *Cloudflare Worker* untuk *caching* & routing pintar secara *serverless*.
+| Layanan | Domain Resmi | Platform Deployment |
+| :--- | :--- | :--- |
+| 🖥️ **Web Dashboard Utama** | [arjunapijak.web.id](https://arjunapijak.web.id) | Google Cloud Run (Frontend Vue 3) |
+| 📱 **Mobile Web App** | [mobile.arjunapijak.web.id](https://mobile.arjunapijak.web.id) | Google Cloud Run (Flutter Web) |
+| ⚙️ **API Gateway & Backend** | [api.arjunapijak.web.id](https://api.arjunapijak.web.id) | Google Cloud Run (FastAPI Python) |
 
 ---
 
-## 🏗️ Arsitektur Sistem
+## ✨ Fitur Utama Platform
 
-Aplikasi dideploy secara *serverless* dengan arsitektur modern berbiaya rendah dan performa tinggi:
+* **📈 Time Series Forecasting (SARIMAX Tuned)**: Pemodelan runtun waktu otomatis yang menganalisis musiman dan tren harga pangan strategis (seperti beras, cabai, bawang, daging) untuk memberikan estimasi harga hingga 30 hari ke depan.
+* **📑 AI Market Insight (NVIDIA NIM)**: Analisis wawasan cerdas bertenaga model bahasa besar (*Large Language Model*) dari NVIDIA NIM untuk merangkum pergerakan harga signifikan dan memberikan rekomendasi bisnis taktis bagi pelaku usaha dan masyarakat.
+* **🛡️ Secure Sync & Auto-Retraining (Cloud Scheduler)**: Pipeline harian terjadwal (pukul 10:00 WIB) yang terproteksi token aman untuk menarik data terkini dari Bank Indonesia (BI), melatih ulang parameter model, serta memperbarui cache AI insight secara realtime.
+* **📊 Visualisasi Trajektori & Audit Historis**: Grafik interaktif berskala tinggi untuk membandingkan data aktual dengan prediksi, serta melakukan audit performa akurasi model *in-sample fit*.
+* **⚡ Serverless Performance**: Integrasi reverse proxy pintar menggunakan *Cloudflare Workers* untuk mempercepat routing global, optimalisasi aset, dan penanganan CORS.
+
+---
+
+## 🏗️ Arsitektur Sistem Terdistribusi
+
+Sistem dideploy sepenuhnya di arsitektur cloud serverless berbiaya rendah dan performa tinggi:
 
 ```mermaid
 graph TD
-    User([Pengguna]) -->|HTTPS| CF[Cloudflare Worker Proxy]
+    User([Pengguna / Klien]) -->|HTTPS| CF[Cloudflare Workers Proxy]
     CF -->|arjunapijak.web.id/*| CR_FE[Google Cloud Run - Frontend]
     CF -->|api.arjunapijak.web.id/*| CR_BE[Google Cloud Run - Backend]
     CF -->|mobile.arjunapijak.web.id/*| CR_MB[Google Cloud Run - Mobile]
-    CR_BE -->|Database Query| DB[(PostgreSQL Database)]
-    CR_BE -->|AI Summary| NVIDIA[NVIDIA NIM AI Service]
+    
+    CR_BE -->|Query Data| DB[(PostgreSQL Database)]
+    CR_BE -->|Insight Generative| NVIDIA[NVIDIA NIM LLM Service]
+    
+    Scheduler[Google Cloud Scheduler] -->|POST + X-Sync-Token| CR_BE
 ```
 
 ---
 
-## 📁 Struktur Proyek
+## 📁 Struktur Repositori
 
 ```
 arjuna-app/
 ├── backend/            # REST API & Analisis Data (FastAPI + Statsmodels)
-│   ├── app/            # Kode utama aplikasi backend
-│   │   ├── api/        # Endpoint API
-│   │   ├── services/   # Logika bisnis (forecasting, sync, AI summary)
-│   │   └── db/         # Setup database & ORM
-│   └── Dockerfile.prod # Konfigurasi containerisasi produksi
-├── frontend/           # Aplikasi Client Web (Vue 3 + Vite + Tailwind CSS)
-│   ├── src/            # Komponen, router, views, dan aset
-│   └── Dockerfile.prod # Konfigurasi containerisasi produksi
-├── mobile/             # Aplikasi Client Mobile (Flutter Web App)
-│   ├── lib/            # Kode utama Flutter (Riverpod, BLoC/Cubit, UI)
-│   └── Dockerfile.prod # Containerisasi multi-stage (Flutter SDK -> Nginx)
-└── cloudflare-proxy/   # Serverless Reverse Proxy (Cloudflare Workers)
-    └── src/index.js    # Logika routing & rewrite lalu lintas
+│   ├── app/            # Source code utama backend Python
+│   │   ├── api/        # Endpoint API & Proteksi Keamanan
+│   │   ├── services/   # Logika bisnis (forecasting, sync, AI insight)
+│   │   └── db/         # ORM & Schema Database (PostgreSQL)
+│   └── Dockerfile.prod # Containerization produksi backend
+├── frontend/           # Web Dashboard Utama (Vue 3 + Vite + Tailwind CSS)
+│   ├── src/            # Komponen visual, router, views, dan services
+│   └── Dockerfile.prod # Containerization produksi frontend
+├── mobile/             # Aplikasi Mobile Web (Flutter Web App)
+│   ├── lib/            # State management (Riverpod), UI views, & model
+│   └── Dockerfile.prod # Multi-stage build (Flutter SDK -> Nginx)
+└── cloudflare-proxy/   # Edge Reverse Proxy (Cloudflare Workers)
+    └── src/index.js    # Logika routing subdomain dan rewrite URL
 ```
 
 ---
 
-## 🚀 Panduan Memulai Cepat (Lokal)
+## 🚀 Panduan Menjalankan Aplikasi Secara Lokal
 
-### Menggunakan Docker Compose (Direkomendasikan)
+### Menggunakan Docker Compose (Sangat Direkomendasikan)
 
-Pastikan Anda telah memasang [Docker](https://www.docker.com/) dan [Docker Compose](https://docs.docker.com/compose/) di komputer Anda.
+Pastikan Anda telah memasang [Docker](https://www.docker.com/) dan [Docker Compose](https://docs.google.com/compose/).
 
 1. Klon repositori ini:
    ```bash
-   git clone https://github.com/Wildaafn/arjuna-app.git
-   cd arjuna-app
+   git clone https://github.com/wildaafn/ArjunaAppPijak.git
+   cd ArjunaAppPijak
    ```
-2. Jalankan seluruh layanan (Backend, Frontend, dan Database):
+2. Jalankan seluruh layanan beserta database PostgreSQL lokal:
    ```bash
    docker-compose up --build
    ```
-3. Akses aplikasi di peramban Anda:
-   - Frontend: `http://localhost:5173`
-   - API Dokumentasi (Swagger UI): `http://localhost:8000/docs`
+3. Buka browser Anda dan akses:
+   * **Frontend Web**: `http://localhost:5173`
+   * **API Swagger Docs**: `http://localhost:8000/docs`
 
 ---
 
-## 🛠️ Pengembangan Manual (Lokal)
+## ☁️ Continuous Integration & Deployment (CI/CD)
 
-### 1. Setup Backend (Python & FastAPI)
-
-1. Masuk ke direktori backend:
-   ```bash
-   cd backend
-   ```
-2. Buat environment virtual dan pasang dependensi:
-   ```bash
-   python3 -m venv venv
-   source venv/bin/activate
-   pip install -r requirements.txt
-   ```
-3. Buat berkas `.env` berdasarkan berkas `.env.example` dan sesuaikan konfigurasinya.
-4. Jalankan migrasi atau seeder awal:
-   ```bash
-   python seeder.py
-   ```
-5. Jalankan server backend:
-   ```bash
-   uvicorn app.main:app --reload --port 8000
-   ```
-
-### 2. Setup Frontend (Vue 3 & Vite)
-
-1. Masuk ke direktori frontend:
-   ```bash
-   cd ../frontend
-   ```
-2. Pasang dependensi Node.js:
-   ```bash
-   npm install
-   ```
-3. Jalankan server dev:
-   ```bash
-   npm run dev
-   ```
-
-### 3. Setup Mobile (Flutter Web)
-
-1. Pastikan Anda telah menginstal [Flutter SDK](https://docs.flutter.dev/get-started/install) versi stabil.
-2. Masuk ke direktori mobile:
-   ```bash
-   cd ../mobile
-   ```
-3. Unduh package yang dibutuhkan:
-   ```bash
-   flutter pub get
-   ```
-4. Jalankan aplikasi pada mode web lokal:
-   ```bash
-   flutter run -d chrome
-   ```
+Seluruh pembaruan kode dideploy otomatis menggunakan **Google Cloud Build** (`cloudbuild.yaml`):
+* **Build & Push**: Setiap *push* ke branch `main` memicu pembuatan Docker Image untuk backend, frontend, dan mobile secara paralel dan menyimpannya di *Artifact Registry*.
+* **Serverless Deployment**: Cloud Build mendeploy container terbaru ke *Google Cloud Run* dengan auto-scaling (`0` - `3` instansi) guna menjamin efisiensi biaya.
+* **Auto-Migration**: Database PostgreSQL diperbarui secara otomatis menggunakan SQLAlchemy ORM pada setiap siklus startup container.
 
 ---
 
-## ☁️ Integrasi & Deployment (CI/CD)
+## 👥 Kontributor & Lisensi
 
-Proyek ini terintegrasi sepenuhnya dengan **Google Cloud Build** (`cloudbuild.yaml`) untuk melancarkan proses integrasi dan penyebaran berkelanjutan:
-- **Build & Push**: Docker image untuk backend (FastAPI), frontend web (Vue 3), dan mobile web (Flutter) dibuat secara otomatis saat terjadi *push* ke cabang utama (`main`) dan diunggah ke *Artifact Registry* GCP.
-- **Serverless Deploy**: Ketiga image disebarkan langsung ke *Google Cloud Run* (`arjuna-backend`, `arjuna-frontend`, `arjuna-mobile`) dengan penskalaan dinamis dari `0` hingga `3` instansi (untuk efisiensi biaya optimal di bawah anggaran $5).
-- **Reverse Proxy & Routing**: Diarahkan via *Cloudflare Worker* (`cloudflare-proxy`) agar domain utama `arjunapijak.web.id`, API `api.arjunapijak.web.id`, dan mobile `mobile.arjunapijak.web.id` terpusat dan dilindungi oleh SSL Cloudflare.
+Dibuat dengan dedikasi oleh **Tim Arjuna Pijak Capstone**:
+* 🧑‍💻 **Rafly**
+* 🧑‍💻 **Risky**
+* 🧑‍💻 **Wilda**
+* 🧑‍💻 **Wildan**
 
----
-
-## 📝 Kontributor & Lisensi
-
-Dibuat oleh **Tim Arjuna Pijak Capstone (Rafly, Risky, wilda dan wildan)**. Seluruh kode dilisensikan di bawah lisensi MIT.
-
-
+Seluruh kode dalam proyek ini berlisensi di bawah [MIT License](LICENSE).
