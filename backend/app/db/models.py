@@ -20,3 +20,11 @@ class CommodityPrice(Base):
     price = Column(Float, nullable=False)
 
     commodity = relationship("Commodity", back_populates="prices")
+
+class SystemMetadata(Base):
+    __tablename__ = "system_metadata"
+
+    id = Column(Integer, primary_key=True, index=True)
+    key = Column(String, unique=True, index=True, nullable=False)
+    value = Column(String, nullable=False)
+

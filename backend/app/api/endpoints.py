@@ -224,7 +224,7 @@ def get_model_insight(
         
         # Ambil metadata tanggal fetch & training terbaru untuk ditampilkan di UI
         from app.services.sync_service import get_system_metadata
-        metadata = get_system_metadata()
+        metadata = get_system_metadata(db)
         if isinstance(insight, dict):
             insight["last_updated_train"] = metadata.get("last_updated_train", "-")
             insight["last_updated_fetch"] = metadata.get("last_updated_fetch", "-")

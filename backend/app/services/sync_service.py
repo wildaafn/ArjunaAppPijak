@@ -6,7 +6,7 @@ import logging
 import time
 from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
-from app.db.models import Commodity, CommodityPrice
+from app.db.models import Commodity, CommodityPrice, SystemMetadata
 from app.services.forecast import (
     _forecast_cache, _audit_cache, _insight_cache,
     generate_forecast, get_ai_insight, PARENT_CHILD_MAP
@@ -30,31 +30,37 @@ def format_datetime_id(dt: datetime) -> str:
     minute = f"{dt.minute:02d}"
     return f"{day} {month} {year} pukul {hour}:{minute} WIB"
 
-def get_system_metadata() -> dict:
-    if os.path.exists(METADATA_FILE):
-        try:
-            with open(METADATA_FILE, "r", encoding="utf-8") as f:
-                return json.load(f)
-        except Exception as e:
-            logger.error(f"Gagal membaca metadata sistem: {e}")
-    # Default fallback
+def get_system_metadata(db: Session) -> dict:
+    try:
+        records = db.query(SystemMetadata).all()
+        meta_dict = {r.key: r.value for r in records}
+    except Exception as e:
+        logger.error(f"Gagal membaca metadata sistem dari database: {e}")
+        meta_dict = {}
+
     return {
-        "last_updated_train": "-",
-        "last_updated_fetch": "-"
+        "last_updated_train": meta_dict.get("last_updated_train", "-"),
+        "last_updated_fetch": meta_dict.get("last_updated_fetch", "-")
     }
 
-def save_system_metadata(train_time: str = None, fetch_time: str = None):
-    data = get_system_metadata()
-    if train_time:
-        data["last_updated_train"] = train_time
-    if fetch_time:
-        data["last_updated_fetch"] = fetch_time
+def save_system_metadata(db: Session, train_time: str = None, fetch_time: str = None):
     try:
-        os.makedirs(os.path.dirname(METADATA_FILE), exist_ok=True)
-        with open(METADATA_FILE, "w", encoding="utf-8") as f:
-            json.dump(data, f, indent=4, ensure_ascii=False)
+        if train_time:
+            rec = db.query(SystemMetadata).filter(SystemMetadata.key == "last_updated_train").first()
+            if rec:
+                rec.value = train_time
+            else:
+                db.add(SystemMetadata(key="last_updated_train", value=train_time))
+        if fetch_time:
+            rec = db.query(SystemMetadata).filter(SystemMetadata.key == "last_updated_fetch").first()
+            if rec:
+                rec.value = fetch_time
+            else:
+                db.add(SystemMetadata(key="last_updated_fetch", value=fetch_time))
+        db.commit()
     except Exception as e:
-        logger.error(f"Gagal menyimpan metadata sistem: {e}")
+        db.rollback()
+        logger.error(f"Gagal menyimpan metadata sistem ke database: {e}")
 
 def get_jakarta_time() -> datetime:
     try:
@@ -154,7 +160,7 @@ def fetch_and_sync_data(db: Session) -> dict:
         
         # Simpan waktu fetch berhasil
         fetch_time_str = format_datetime_id(dt_now)
-        save_system_metadata(fetch_time=fetch_time_str)
+        save_system_metadata(db, fetch_time=fetch_time_str)
         return {"status": "success", "fetch_time": fetch_time_str}
         
     except Exception as e:
@@ -211,7 +217,7 @@ def retrain_and_precache(db: Session) -> dict:
             
     dt_now = get_jakarta_time()
     train_time_str = format_datetime_id(dt_now)
-    save_system_metadata(train_time=train_time_str)
+    save_system_metadata(db, train_time=train_time_str)
     
     logger.info(f"Retraining & pre-cache selesai. Sukses: {success_count}, Gagal: {fail_count}")
     return {
