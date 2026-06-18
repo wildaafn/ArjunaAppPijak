@@ -33,6 +33,9 @@ class Settings(BaseSettings):
     # News Configuration (GNews.io)
     GNEWS_API_KEY: str = ""
 
+    # Security token for admin tasks/sync trigger
+    ADMIN_SYNC_TOKEN: Optional[str] = None
+
     class Config:
         env_file = ".env"
 

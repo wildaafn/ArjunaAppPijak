@@ -1,4 +1,5 @@
-from fastapi import APIRouter, HTTPException, Query, Depends
+from fastapi import APIRouter, HTTPException, Query, Depends, Header
+from typing import Optional
 from sqlalchemy.orm import Session
 from sqlalchemy import extract, func
 from app.db.database import get_db
@@ -256,8 +257,15 @@ def get_market_global_analysis(db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail=f"Gagal mengambil analisis pasar global: {str(e)}")
 
 @router.post("/api/trigger-sync", tags=["Admin/Sync"])
-def trigger_sync(db: Session = Depends(get_db)):
+def trigger_sync(
+    db: Session = Depends(get_db),
+    x_sync_token: Optional[str] = Header(None, alias="X-Sync-Token")
+):
     """Memicu proses sinkronisasi dataset terbaru dari BI dan melakukan retraining/pre-cache model secara manual."""
+    # Validasi token jika ADMIN_SYNC_TOKEN diset di env
+    if settings.ADMIN_SYNC_TOKEN and x_sync_token != settings.ADMIN_SYNC_TOKEN:
+        raise HTTPException(status_code=403, detail="Akses ditolak: Token sinkronisasi tidak valid.")
+        
     try:
         from app.services.sync_service import trigger_full_sync_job
         res = trigger_full_sync_job(db)
