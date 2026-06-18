@@ -8,17 +8,13 @@ class ApiConfig {
   static const String insight = '/insight';
   static const String audit = '/audit';
 
+  /// Backend proxy untuk GNews — menghindari CORS saat dipanggil dari browser.
+  /// Backend (/api/news) memanggil GNews.io server-side menggunakan GNEWS_API_KEY
+  /// yang tersimpan di GCP Secret Manager.
+  static const String news = '/api/news';
+
   // Timeouts
   static const Duration connectTimeout = Duration(seconds: 10);
   static const Duration receiveTimeout = Duration(seconds: 45);
-
-  // GNews.io — https://gnews.io (free: 100 req/day, no mobile restriction)
-  // Gunakan --dart-define=GNEWS_API_KEY=key_anda atau --dart-define-from-file=secrets.json
-  static const String newsApiKey = String.fromEnvironment(
-    'GNEWS_API_KEY',
-    defaultValue: '',
-  );
-  static const String newsApiBaseUrl = 'https://gnews.io/api/v4';
-  static const String newsQuery =
-      '"harga pangan" OR "harga beras" OR "harga cabai" OR "harga bawang" OR "harga daging" OR "harga telur" OR "komoditas pangan"';
 }
+

@@ -22,15 +22,11 @@ RUN flutter doctor
 # Enable web build
 RUN flutter config --enable-web
 
-# Accept GNEWS API key as build argument (injected from Cloud Build secrets)
-ARG GNEWS_API_KEY=""
-
 # Copy project files and build web
 WORKDIR /app
 COPY . .
 RUN flutter pub get
-RUN flutter build web --release \
-    --dart-define=GNEWS_API_KEY=${GNEWS_API_KEY}
+RUN flutter build web --release
 
 # Stage 2: Serve the app using Nginx
 FROM nginx:alpine

@@ -64,7 +64,7 @@ steps:
       - '--min-instances=0'
       - '--max-instances=3'
       - '--set-env-vars=^@^APP_ENV=production@DEBUG=False@ALLOWED_ORIGINS=https://arjunapijak.web.id,https://arjuna-frontend-60410062142.asia-southeast2.run.app,https://mobile.arjunapijak.web.id'
-      - '--set-secrets=DATABASE_URL_ENV=arjuna-db-url:latest,NVIDIA_API_KEY=arjuna-nvidia-key:latest'
+      - '--set-secrets=DATABASE_URL_ENV=arjuna-db-url:latest,NVIDIA_API_KEY=arjuna-nvidia-key:latest,GNEWS_API_KEY=arjuna-gnews-key:latest'
 
   # ─── DEPLOY FRONTEND TO CLOUD RUN ────────────────────────────────
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
@@ -88,7 +88,6 @@ steps:
   # ─── BUILD MOBILE (FLUTTER WEB) ──────────────────────────────────
   - name: 'gcr.io/cloud-builders/docker'
     id: 'build-mobile'
-    secretEnv: ['GNEWS_API_KEY']
     args:
       - 'build'
       - '-t'
@@ -97,8 +96,6 @@ steps:
       - 'asia-southeast2-docker.pkg.dev/$PROJECT_ID/arjuna-pijak/mobile:latest'
       - '-f'
       - 'mobile/Dockerfile.prod'
-      - '--build-arg'
-      - 'GNEWS_API_KEY=$$GNEWS_API_KEY'
       - './mobile'
 
   # ─── PUSH MOBILE ──────────────────────────────────────────────────

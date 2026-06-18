@@ -11,6 +11,45 @@ from app.core.config import settings
 
 router = APIRouter()
 
+@router.get("/api/news", tags=["Mobile"])
+def get_pangan_news(max: int = Query(6, ge=1, le=10, description="Jumlah artikel berita")):
+    """
+    Proxy endpoint untuk mengambil berita pangan terbaru dari GNews.io.
+    Diperlukan agar Flutter Web tidak terkendala CORS saat memanggil GNews langsung dari browser.
+    """
+    import urllib.request
+    import urllib.parse
+    import urllib.error
+    import json
+
+    if not settings.GNEWS_API_KEY:
+        raise HTTPException(status_code=503, detail="GNEWS_API_KEY belum dikonfigurasi di server.")
+
+    query = '"harga pangan" OR "harga beras" OR "harga cabai" OR "harga bawang" OR "harga daging" OR "harga telur" OR "komoditas pangan"'
+    params = urllib.parse.urlencode({
+        "q": query,
+        "lang": "id",
+        "country": "id",
+        "max": max,
+        "token": settings.GNEWS_API_KEY,
+    })
+    url = f"https://gnews.io/api/v4/search?{params}"
+
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": "ArjunaPijak/1.0"})
+        with urllib.request.urlopen(req, timeout=15) as response:
+            data = json.loads(response.read().decode("utf-8"))
+            articles = data.get("articles", [])
+            # Filter artikel yang memiliki title dan url
+            articles = [a for a in articles if a.get("title") and a.get("url")]
+            return {"articles": articles, "totalArticles": len(articles)}
+    except urllib.error.HTTPError as e:
+        raise HTTPException(status_code=502, detail=f"GNews API error: {e.code} {e.reason}")
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=f"Gagal mengambil berita: {str(e)}")
+
+
+
 @router.get("/commodities", tags=["Metadata"])
 def list_commodities():
     """Mengembalikan daftar seluruh komoditas subkategori yang didukung."""

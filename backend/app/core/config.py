@@ -30,6 +30,9 @@ class Settings(BaseSettings):
     # AI Insight Configuration
     NVIDIA_API_KEY: str = ""
 
+    # News Configuration (GNews.io)
+    GNEWS_API_KEY: str = ""
+
     class Config:
         env_file = ".env"
 
